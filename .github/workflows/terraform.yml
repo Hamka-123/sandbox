@@ -33,6 +33,10 @@ env:
   # Передаем образ по умолчанию
   TF_VAR_container_image: "ghcr.io/hamka-123/go-web-app:latest"
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   terraform:
     name: terraform ${{ inputs.action }}
