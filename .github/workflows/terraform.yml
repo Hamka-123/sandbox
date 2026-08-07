@@ -20,6 +20,12 @@ on:
           - dev
           - prod
 
+      image_tag:
+        description: "Image tag to deploy (e.g. sha-34ac481 or latest). Leave empty to auto-detect."
+        required: false
+        default: ""
+        type: string
+
 env:
   ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
   # changed to OIDC
@@ -67,7 +73,7 @@ jobs:
           # Artifact name. If the `archive` input is `false`, the name of the file uploaded will be the artifact name.
           name: github-oidc-token.jwt
           # A file, directory or wildcard pattern that describes what to upload.
-          path: terraform_local/github-oidc-token.jwt
+          path: ./go-web-site/infra/github-oidc-token.jwt
 
       - name: Azure Login via OIDC
         uses: azure/login@v3
@@ -102,16 +108,39 @@ jobs:
         run: |
           terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }}
 
-      - name: Get short SHA
-        id: vars
-        run: echo "sha_short=sha-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - name: Get Last Successful Build SHA
+        id: get-sha
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Проверяем, передан ли тег вручную при запуске
+          if [ -n "${{ inputs.image_tag }}" ]; then
+            echo "TAG=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+            exit 0
+          fi
 
+          # Если поле пустое — запрашиваем SHA последнего успешного билда
+          LAST_SHA=$(gh run list \
+            --workflow="go-webapp-build.yml" \
+            --status=success \
+            --limit 1 \
+            --json headSha \
+            --jq '.[0].headSha')
+
+          if [ -z "$LAST_SHA" ]; then
+            echo "Error: No successful build found in go-webapp-build.yml!"
+            exit 1
+          fi
+
+          SHORT_SHA=$(echo $LAST_SHA | cut -c1-7)
+          echo "TAG=sha-${SHORT_SHA}" >> $GITHUB_OUTPUT
       - name: Terraform Plan
         run: |
           if [ "${{ inputs.action }}" = "destroy" ]; then
             terraform plan -destroy -out=tfplan
           else
-            terraform plan -out=tfplan -var="image_tag=${{ steps.vars.outputs.sha_short }}"
+            echo "Deploying image tag: ${{ steps.get-sha.outputs.TAG }}"
+            terraform plan -out=tfplan -var="image_tag=${{ steps.get-sha.outputs.TAG }}"
           fi
 
       - name: Terraform ${{ inputs.action }}
