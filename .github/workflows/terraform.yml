@@ -102,12 +102,16 @@ jobs:
         run: |
           terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }}
 
+      - name: Get short SHA
+        id: vars
+        run: echo "sha_short=sha-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
       - name: Terraform Plan
         run: |
           if [ "${{ inputs.action }}" = "destroy" ]; then
             terraform plan -destroy -out=tfplan
           else
-            terraform plan -out=tfplan -var="image_tag=${{ github.sha }}"
+            terraform plan -out=tfplan -var="image_tag=${{ steps.vars.outputs.sha_short }}"
           fi
 
       - name: Terraform ${{ inputs.action }}
