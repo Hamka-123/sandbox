@@ -3,7 +3,7 @@ name: Build & Push to GHCR
 on:
     push:
         branches: ["main"]
-        paths: 
+        paths:
             - "go-web-site/**" # Для срабатывания на пуш только в этот каталог
     workflow_dispatch: # Возможность ручного запуска
 
@@ -35,15 +35,17 @@ jobs:
                   #images: ghcr.io/${{ github.repository }}
                   images: ghcr.io/${{ github.repository_owner }}/go-web-app #кастомизируем название пакета
                   tags: |
-                      type=raw,value=latest
+                      type=raw,value=latest,enable={{is_default_branch}}
                       type=sha,format=short
+                      type=ref,event=branch
+                      type=ref,event=pr
 
             - name: Build and push Docker image
               uses: docker/build-push-action@v7
               with:
                   context: ./go-web-site # <--- Указываем папку с Dockerfile
                   file: ./go-web-site/Dockerfile # <--- Явный путь к Dockerfile
-                  push: true
+                  push: ${{ github.event_name != 'pull_request' }}
                   platforms: linux/amd64, linux/arm64/v8
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}
