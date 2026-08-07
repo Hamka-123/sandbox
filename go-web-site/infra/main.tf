@@ -12,10 +12,6 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 3.0"
     }
-    docker = {
-      source  = "kreuzwerker/docker"
-      version = "~> 3.0"
-    }
   }
 }
 
@@ -23,27 +19,11 @@ provider "azurerm" {
   features {}
 }
 
-# Авторизуем Docker-провайдер в GHCR
-provider "docker" {
-  registry_auth {
-    address  = "ghcr.io"
-    username = var.ghcr_username
-    password = var.ghcr_token
-  }
-}
-
-# 1. Запрашиваем актуальный digest (sha256) у GHCR
-data "docker_registry_image" "app" {
-  name = var.container_image
-}
-
-# 2. Группа ресурсов Azure
 resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
   location = var.location
 }
 
-# 3. Azure Container Instance (ACI)
 resource "azurerm_container_group" "aci" {
   name                = var.container_group_name
   location            = azurerm_resource_group.rg.location
@@ -63,7 +43,8 @@ resource "azurerm_container_group" "aci" {
   container {
     name = var.container_name
     # ВАЖНО: передаем динамический digest (ghcr.io/hamka-123/go-web-app@sha256:...)
-    image  = "${var.container_image}@${data.docker_registry_image.app.sha256_digest}"
+    # Формируем прямую ссылку: "ghcr.io/hamka-123/go-web-app:v1.0.4"
+    image  = "${var.container_image}:${var.image_tag}"
     cpu    = "0.5"
     memory = "1.5"
 

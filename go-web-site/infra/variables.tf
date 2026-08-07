@@ -28,13 +28,6 @@ variable "container_name" {
   description = "Имя контейнера внутри группы"
 }
 
-variable "container_image" {
-  type    = string
-  default = "ghcr.io/hamka-123/go-web-app:latest"
-  #default     = "ghcr.io/hamka-123/go-web-app:sha-34c9c3c@sha256:52b588e0915fe8a48ffe79440a7ed3de71da92fbe42212ce08e0211de5aac5a1"
-  description = "Полный путь к образу с тегом или digest"
-}
-
 variable "container_port" {
   type        = number
   default     = 8080
@@ -51,4 +44,16 @@ variable "ghcr_token" {
   type        = string
   sensitive   = true
   description = "GitHub Personal Access Token (PAT) с правами read:packages"
+}
+
+variable "container_image" {
+  type        = string
+  default     = "ghcr.io/hamka-123/go-web-app"
+  description = "Базовый путь к образу без тега"
+}
+
+variable "image_tag" {
+  type        = string
+  default     = "latest"
+  description = "Тег образа (передается из CI/CD)"
 }
