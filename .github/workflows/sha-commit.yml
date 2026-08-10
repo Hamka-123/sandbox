@@ -12,6 +12,7 @@ jobs:
           GH_TOKEN: ${{ github.token }} # Обязательно: даем права утилите gh
         run: |
           LAST_SHA=$(gh run list \
+            --repo "${{ github.repository }}" \
             --workflow="go-webapp-build.yml" \
             --status=success \
             --limit 1 \
