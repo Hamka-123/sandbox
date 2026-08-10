@@ -135,7 +135,7 @@ jobs:
           fi
 
           SHORT_SHA=$(echo $LAST_SHA | cut -c1-7)
-          echo "TAG=${SHORT_SHA}" >> $GITHUB_OUTPUT
+          echo "TAG=sha-${SHORT_SHA}" >> $GITHUB_OUTPUT
       - name: Terraform Plan
         run: |
           if [ "${{ inputs.action }}" = "destroy" ]; then
