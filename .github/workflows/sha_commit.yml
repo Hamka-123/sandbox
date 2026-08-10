@@ -1,6 +1,0 @@
-gh run list \
-  --workflow="go-webapp-build.yml" \
-  --status=success \
-  --limit 1 \
-  --json headSha \
-  --jq '.[0].headSha'
