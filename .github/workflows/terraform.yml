@@ -121,6 +121,7 @@ jobs:
 
           # Если поле пустое — запрашиваем SHA последнего успешного билда
           LAST_SHA=$(gh run list \
+            --repo "${{ github.repository }}" \
             --workflow="go-webapp-build.yml" \
             --status=success \
             --limit 1 \
@@ -133,7 +134,7 @@ jobs:
           fi
 
           SHORT_SHA=$(echo $LAST_SHA | cut -c1-7)
-          echo "TAG=sha-${SHORT_SHA}" >> $GITHUB_OUTPUT
+          echo "TAG=${SHORT_SHA}" >> $GITHUB_OUTPUT
       - name: Terraform Plan
         run: |
           if [ "${{ inputs.action }}" = "destroy" ]; then
