@@ -35,13 +35,14 @@ env:
 
   # Автоматически передаем логин и токен для провайдера docker в Terraform
   TF_VAR_ghcr_username: ${{ github.actor }}
-  TF_VAR_ghcr_token: ${{ secrets.GHCR_PAT }}
+  TF_VAR_ghcr_token: ${{ secrets.GITHUB_TOKEN }}
   # Передаем образ по умолчанию
   # TF_VAR_container_image: "ghcr.io/hamka-123/go-web-app:latest"
 
 permissions:
   id-token: write
   contents: read
+  packages: read
 
 jobs:
   terraform:
