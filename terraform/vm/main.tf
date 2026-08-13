@@ -16,10 +16,9 @@ resource "azurerm_resource_group" "rg" {
 #     source  = "Azure/network/azurerm"
 #     version = "5.3.0" # Для удаленных модулей ОЧЕНЬ рекомендуется фиксировать версию!
 
-#     # Дальше твои параметры
 #     resource_group_name = azurerm_resource_group.rg.name
 #     address_spaces      = ["10.0.0.0/16"]
-#     # ДОБАВЬ ЭТУ СТРОКУ (поставь true или false в зависимости от того, что требует логика модуля)
+#     # (поставить true или false в зависимости от того, что требует логика модуля)
 #     use_for_each = false   
 # }
 # module "private_network" {
@@ -36,8 +35,6 @@ module "network" {
     address_space       = "10.0.0.0/16"
     subnet_prefixes     = ["10.0.1.0/24"]
     subnet_names        = ["subnet1"]
-    
-    # Помнишь нашу ошибку? Не забудь передать этот обязательный аргумент
     use_for_each        = false 
     depends_on = [ azurerm_resource_group.rg ]
 }
