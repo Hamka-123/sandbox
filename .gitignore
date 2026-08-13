@@ -1,9 +1,3 @@
-
-# Игнорируем служебную папку Terraform и провайдеры
-.terraform/
-*.tfstate
-*.tfstate.*
-
 # Игнорируем файлы с секретными переменными
 *.tfvars
 *.tfvars.json
@@ -12,5 +6,51 @@ override.tf.json
 *_override.tf
 *_override.tf.json
 
+Python_course/Project_2/MyEnv/
 
+Python_course/venv
+*/.env
+Python_course/Project_2/.env
+Python_course/Project_2/TO_DO/.env
+Python_course/Project_2/TO_DO/VirtualEnviroments/venv312
+Python_course/Project_2/TO_DO/VirtualEnviroments/venv312_2
+Python_course/Project_2/TO_DO/VirtualEnviroments/venv314
+Python_course/Project_2/venv312_2
+
+# Игнорировать все файлы баз данных SQLite
+*.db
+*.sqlite
+*.sqlite3
+Python_course/Project_2/PlannerProject/budget_database/main_db.db
+**/db_data/
+
+
+*.zip
+*.sock
 .DS_Store
+commands.txt
+.vscode/
+.vscode/*.json
+**/.megaignore
+__pycache__/
+Python_course/Project_2/Project_2.code-workspace
+Python_course/Project_2/.vscode/
+
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+terraform/Azure/sa_info.json
+terraform/Azure/sa_info_pretty.json
+terraform/Azure/ter_show_info.json
+terraform/Azure/ter_show_info.txt
