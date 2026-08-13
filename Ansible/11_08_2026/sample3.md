@@ -108,8 +108,8 @@ cat << 'EOF' > deploy_custom_site.yml
         mode: '0755'
 
     # --- ДЕПЛОЙ ШАБЛОНА ---
-    # ОШИБКА/ЗАГАДКА №4 (Главная "загадка" преподавателя): Использование модуля copy вместо template.
-    # ПРЕПОД:
+    # ОШИБКА/ЗАГАДКА №4 (Главная "загадка"): Использование модуля copy вместо template.
+    # 
     # - name: Deploy file
     #   ansible.builtin.copy:
     #     src: templates/index.html.j2
