@@ -1,4 +1,6 @@
 # Игнорируем файлы с секретными переменными
+.env
+*/.env
 *.tfvars
 *.tfvars.json
 override.tf
@@ -6,28 +8,21 @@ override.tf.json
 *_override.tf
 *_override.tf.json
 
-# Python / Virtual Environments
-VirtualEnviroments/
-venv/
-env/
-.env
-
 # Build & packaging artifacts
 build/
 dist/
 *.egg-info/
 *.tar.gz
 
-# Logs & OS files
-*.log
-.DS_Store
+# Python / Virtual Environments
+__pycache__/
 VirtualEnviroments/
-build/
+venv/
+env/
 *.egg-info/
+Python_course/venv
 Python_course/Project_2/TO_DO/custom_env*/
 Python_course/Project_2/MyEnv/
-Python_course/venv
-*/.env
 Python_course/Project_2/.env
 Python_course/Project_2/TO_DO/.env
 Python_course/Project_2/TO_DO/VirtualEnviroments/venv312
@@ -42,15 +37,15 @@ Python_course/Project_2/venv312_2
 Python_course/Project_2/PlannerProject/budget_database/main_db.db
 **/db_data/
 
-
+# Logs & OS files
+*.log
 *.zip
 *.sock
 .DS_Store
-commands.txt
 .vscode/
 .vscode/*.json
 **/.megaignore
-__pycache__/
+commands.txt
 Python_course/Project_2/Project_2.code-workspace
 Python_course/Project_2/.vscode/
 
