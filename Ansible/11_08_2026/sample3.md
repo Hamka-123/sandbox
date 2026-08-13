@@ -23,7 +23,7 @@ cat << 'EOF' > templates/index.html.j2
         {#
           ОШИБКА/ЗАГАДКА №1: В Docker-контейнерах факты сети (ansible_default_ipv4) 
           могут отсутствовать или быть пустыми. Вызов напрямую .address упадет с UndefinedError.
-          ПРЕПОД: <li><strong>IP Address:</strong> {{ ansible_default_ipv4.address }}</li>
+           <li><strong>IP Address:</strong> {{ ansible_default_ipv4.address }}</li>
         #}
         <li><strong>IP Address:</strong> {{ ansible_default_ipv4.address | default('N/A') }}</li>
         <li><strong>Total Memory:</strong> {{ ansible_memtotal_mb | default('N/A') }} MB</li>
@@ -35,7 +35,7 @@ cat << 'EOF' > templates/index.html.j2
     {#
       ОШИБКА/ЗАГАДКА №2: Если хост не попал в группу [webservers], active_services не считается 
       и цикл {% for %} упадет на UndefinedError.
-      ПРЕПОД: {% for service in active_services %}
+       {% for service in active_services %}
     #}
     {% for service in active_services | default([]) %}
         <li>{{ service }}</li>
@@ -47,7 +47,7 @@ EOF
 
 echo "=== 3. Creating Group Variables (group_vars/webservers.yml) ==="
 cat << 'EOF' > group_vars/webservers.yml
-# ПРЕПОД: Переменная site_title зашита в group_vars, из-за чего у всех хостов одинаковый title.
+# Переменная site_title зашита в group_vars, из-за чего у всех хостов одинаковый title.
 # site_title: "Automated DevOps Node"
 
 active_services:
