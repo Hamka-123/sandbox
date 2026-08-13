@@ -1,0 +1,97 @@
+# ==============================================================================
+# 🎓 ИНТЕРАКТИВНЫЙ ТРЕНАЖЕР ПО ФУНКЦИЯМ TERRAFORM (HCL)
+# ==============================================================================
+# Инструкция: Скролль вниз до блока "default = {" 
+# и меняй значения там! 
+# Запускай `terraform plan -target=data.null_data_source.verification_engine` для проверки.
+
+variable "answers" {
+  # Тут мы строго описываем типы данных, здесь НИЧЕГО менять не нужно:
+  type = object({
+    type_coercion_1 = bool
+    type_coercion_2 = bool
+    logic_and       = bool
+    logic_or        = bool
+    ternary_result  = string
+    lookup_exist    = string
+    lookup_miss     = string
+  })
+
+  # ============================================================================
+  # 🎯 МЕСТО ДЛЯ ТВОИХ ОТВЕТОВ: Меняй значения прямо тут!
+  # ============================================================================
+  default = {
+    # РАУНД 1: Автоматическое приведение типов (Type Coercion)
+    # Что вернет Терраформ? Напиши true или false (без кавычек)
+    type_coercion_1 = false # Выражение: 5 >= "5"
+    type_coercion_2 = false # Выражение: "10" == 10
+
+    # РАУНД 2: Логические операторы (Конъюнкция и Дизъюнкция)
+    # Что вернет Терраформ? Напиши true или false (без кавычек)
+    logic_and = true  # Выражение: (5 > 3) && (2 > 4)
+    logic_or  = false # Выражение: (5 > 3) || (2 > 4)
+
+    # РАУНД 3: Тернарный оператор (if-else в одну строку)
+    # Какую строку выберет Терраформ? Напиши "prod" или "dev" в кавычках
+    ternary_result = "ошибка" # Выражение: (10 < 5) ? "prod" : "dev"
+
+    # РАУНД 4: Функция lookup()
+    # Напиши СТРОКУ, которую вернет функция lookup в каждом случае.
+    # Словарь для справок: { dev = "B1s", prod = "D2s" }
+    lookup_exist = "ничего" # Выражение: lookup({ dev = "B1s", prod = "D2s" }, "dev", "Standard_A1")
+    lookup_miss  = "ничего" # Выражение: lookup({ dev = "B1s", prod = "D2s" }, "stage", "Standard_A1")
+  }
+}
+
+# ==============================================================================
+# 🤖 ДВИЖОК ПРОВЕРКИ ОТВЕТОВ
+# ==============================================================================
+locals {
+  check_coercion_1 = var.answers.type_coercion_1 == (5 >= "5")
+  check_coercion_2 = var.answers.type_coercion_2 == ("10" == 10)
+  check_and        = var.answers.logic_and == ((5 > 3) && (2 > 4))
+  check_or         = var.answers.logic_or == ((5 > 3) || (2 > 4))
+  check_ternary    = var.answers.ternary_result == ((10 < 5) ? "prod" : "dev")
+  mock_map         = { dev = "B1s", prod = "D2s" }
+  check_lk_exist   = var.answers.lookup_exist == lookup(local.mock_map, "dev", "Standard_A1")
+  check_lk_miss    = var.answers.lookup_miss == lookup(local.mock_map, "stage", "Standard_A1")
+}
+
+data "null_data_source" "verification_engine" {
+  inputs = { status = "Checking..." }
+  lifecycle {
+    postcondition {
+      condition     = local.check_coercion_1
+      error_message = "❌ Ошибка в Раунде 1 (Задание 1)! Подумай, как Терраформ приводит строку '5' к числу при сравнении >=."
+    }
+    postcondition {
+      condition     = local.check_coercion_2
+      error_message = "❌ Ошибка в Раунде 1 (Задание 2)! Срабатывает ли Type Coercion при строгом равенстве '=='?"
+    }
+    postcondition {
+      condition     = local.check_and
+      error_message = "❌ Ошибка в Раунде 2 (&& Конъюнкция)! Помни: оператор И требует, чтобы ОБА условия были true."
+    }
+    postcondition {
+      condition     = local.check_or
+      error_message = "❌ Ошибка в Раунде 2 (|| Дизъюнкция)! Помни: оператору ИЛИ достаточно, чтобы хотя бы ОДНО условие было true."
+    }
+    postcondition {
+      condition     = local.check_ternary
+      error_message = "❌ Ошибка в Раунде 3 (Тернарка)! Математика шепчет, что 10 НЕ меньше 5. Какая часть выполнится?"
+    }
+    postcondition {
+      condition     = local.check_lk_exist
+      error_message = "❌ Ошибка в Раунде 4 (lookup существующий)! Если ключ есть в словаре, функция возвращает значение ключа или дефолт?"
+    }
+    postcondition {
+      condition     = local.check_lk_miss
+      error_message = "❌ Ошибка в Раунде 4 (lookup отсутствующий)! Ключа 'stage' нет в словаре. Какая строка сработает как подушка безопасности?"
+    }
+  }
+}
+
+output "TUTORIAL_STATUS" {
+  value      = "🎉 ПОЗДРАВЛЯЮ! Ты заполнила все функции абсолютно верно! Твой HCL-фу на высоте."
+  depends_on = [data.null_data_source.verification_engine]
+}

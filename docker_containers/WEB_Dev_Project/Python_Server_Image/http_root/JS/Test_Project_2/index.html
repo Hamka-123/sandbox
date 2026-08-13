@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="js/script.js"></script>
+</head>
+<body>
+    <h1>Input fields</h1>
+    <h2 id="date"></h2>
+    <input type="text" placeholder="Enter something " onkeyup="checkInput(this)">
+    <div id="err"></div>
+    <!-- TODO: write selected date into #date -->
+    <input type="date" onchange="checkInput(this)">
+
+    <!-- TODO: change #date color to selected -->
+     <input type="color"  onchange="checkInput(this)">
+    <!-- TODO (Svetlana, Alina): change corrent background color to selected 
+      TODO color mixer 
+     
+    -->
+    <div>
+        <h2>Change background in #palette</h2>
+
+        <input type="range" id="redColor"   min="0" max="255" step="10" oninput="colorMixer()"><span>Red color</span><br>
+        <input type="range" id="greenColor" min="0" max="255" step="10" oninput="colorMixer()"><span>green color </span><br>
+        <input type="range" id="blueColor"  min="0" max="255" step="10" oninput="colorMixer()"><span>blue color</span> <br>
+        <div id="palette">
+            TEST COLORS
+        </div>
+    </div>
+
+    
+</body>
+</html>

@@ -1,0 +1,48 @@
+#!/usr/sbin/nft -f
+
+flush ruleset
+
+table inet filter {
+    chain input {
+        type filter hook input priority 0; policy drop;
+
+        # Разрешаем петлю и уже установленные соединения
+        iif lo accept
+        ct state established,related accept
+
+        # ОТКРЫВАЕМ SSH (чтобы не отвалилось)
+        tcp dport 22 accept
+
+        # Разрешаем пинг (ICMP) — полезно для тестов
+        icmp type echo-request accept
+
+        # Разрешаем DHCP-запросы от клиентов из LAN
+        iifname "LAN" udp dport 67 accept
+        
+
+        # Разрешаем DNS только со стороны локальной сети
+        iifname "LAN" udp dport 53 accept
+        iifname "LAN" tcp dport 53 accept
+    }
+
+    chain forward {
+        type filter hook forward priority 0; policy drop;
+
+        # Разрешаем проход пакетов: LAN -> WAN (интернет)
+        iifname "LAN" oifname "WAN" accept
+
+        # Разрешаем ответные пакеты: WAN -> LAN
+        iifname "WAN" oifname "LAN" ct state established,related accept
+    }
+
+    chain output {
+        type filter hook output priority 0; policy accept;
+    }
+}
+
+table ip nat {
+    chain postrouting {
+        type nat hook postrouting priority 100;
+        oifname "WAN" masquerade
+    }
+}

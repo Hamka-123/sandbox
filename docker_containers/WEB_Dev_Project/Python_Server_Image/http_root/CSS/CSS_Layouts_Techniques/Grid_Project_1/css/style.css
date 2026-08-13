@@ -1,0 +1,36 @@
+html{
+    body{
+margin: 0px;
+height: 100vh;
+display: grid;
+grid-template-columns: 1fr;
+grid-template-rows: 70px 1fr 70px;;
+        &>header{
+            background-color: aliceblue;
+            display: grid;
+            grid-template-columns: auto 1fr;
+
+            &>#logo{
+                background-color: red;
+            }
+            &>nav{
+                background-color: green;
+                display: grid;
+                grid-auto-flow: column;
+                &>a{}
+            }
+        }
+        &>main{
+            display: grid;
+            grid-template-columns: minmax(200px, 1fr) 3fr;
+
+            
+            &>section{
+                
+            }
+        }
+        &>footer{
+            background-color: aliceblue;
+        }
+    }
+}

@@ -1,0 +1,17 @@
+server {
+    listen {{ http_port }};
+    server_name {{ ansible_default_ipv4.address }};
+    root /var/www/html;
+
+    {% if environment_name == "Production" %}
+    # Security settings for Production
+    client_max_body_size {{ ram_prod }};
+    {% else %}
+    # Debug settings for Non-Production
+    client_max_body_size {{ ram_non_prod }};
+    {% endif %}
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}

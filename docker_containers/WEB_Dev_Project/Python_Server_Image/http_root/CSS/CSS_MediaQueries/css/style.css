@@ -1,0 +1,43 @@
+.media-managed {
+    display: none;
+}
+
+/* Media queries:
+ */
+
+@media all and (max-width:400px) {
+    .mobile-content {
+        display: block;
+    }
+
+}
+
+
+@media all and (min-width:401px) and (max-width:1000px) {
+    .tablet-content {
+        display: block;
+    }
+    p{
+        columns: 2;
+    }
+
+}
+
+
+@media all and (min-width:1001px) {
+    .desktop-content {
+        display: block;
+    }
+    p{
+        columns: 3;
+    }
+
+}
+
+@media print {
+    p{
+        border: 1px solid black;
+       columns: 3;
+    }
+    
+}

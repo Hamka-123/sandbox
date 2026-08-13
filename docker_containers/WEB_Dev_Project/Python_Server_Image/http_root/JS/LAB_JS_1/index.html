@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js" defer="defer"></script>
+  </head>
+  <body>
+    <h2>Task 1 - Show / Hide password</h2>
+    <label id="pwd">
+      <input type="password" placeholder="Type your password" />
+      <span onclick="toggleDisplay()"></span>
+    </label>
+    <hr />
+    <h2>Task 2 - Enable / Disable form</h2>
+    <form>
+      Confirm agreement
+      <input type="checkbox" onchange="enableForm(this)" />
+      <fieldset>
+        <input type="text" /> <input type="text" /> <input type="text" />
+        <input type="submit" />
+      </fieldset>
+    </form>
+    <hr />
+    <h2>Task 3 - in console and here: <span></span></h2>
+    <hr />
+    <h2>Task 4</h2>
+    <form>
+      <h2>How to contact you?</h2>
+      <input type="radio" name="action" value="mail" onchange="myContact()" />
+      e-mail
+      <input type="radio" name="action" value="phone" onchange="myContact()" />
+      phone
+      <input type="radio" name="action" value="sms" onchange="myContact()" />
+      SMS
+    </form>
+    <hr />
+    <h2>Task 5</h2>
+    <h2 onmouseover="showDescr()" onmouseout="hideDescr()">
+      Display / Hide Description
+    </h2>
+    <div id="div1">Lorem ipsum description text</div>
+    <hr />
+    <h2>Task 6</h2>
+    <div id="myImages"></div>
+    <hr />
+    <h2>Task 7</h2>
+    <nav>
+      <a
+        href="#section1"
+        onmouseover="Menu.show('descr1')"
+        onmouseout="Menu.hide('descr1')"
+      >
+        Menu item 1
+      </a>
+    </nav>
+    <div id="descr1">Description text</div>
+    <hr />
+    <h2>Task 8</h2>
+    <button onclick="increaseFont()">+</button>
+    <button onclick="decreaseFont()">-</button>
+  </body>
+</html>

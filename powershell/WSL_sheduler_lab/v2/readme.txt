@@ -1,0 +1,2 @@
+ImportCsv $FilePath Out-GridView
+

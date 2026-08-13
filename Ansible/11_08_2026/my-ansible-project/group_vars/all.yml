@@ -1,0 +1,7 @@
+http_port: 80
+environment_name: "Production" # Или "Development"
+
+ram_prod: "10M"
+ram_non_prod: "50M"
+
+ram: "{{ ram_prod if environment_name == 'Production' else ram_non_prod }}"

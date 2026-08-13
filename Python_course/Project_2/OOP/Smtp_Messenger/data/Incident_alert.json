@@ -1,0 +1,7 @@
+{
+    "service": "PostgreSQL Database",
+    "severity": "CRITICAL", 
+    "datetime": "2025-11-09 14:30 UTC",
+    "metric": "CPU utilization > 95%",
+    "impact": "Замедление ответа API"
+}

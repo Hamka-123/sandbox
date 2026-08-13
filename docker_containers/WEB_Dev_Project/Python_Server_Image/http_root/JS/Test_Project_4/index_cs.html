@@ -1,0 +1,18 @@
+<!--
+! + Tab
+потом внутри head после title
+link:css[href=style.css]+script:src[src=script.js][defer]
+----- потом вставляем в body: ----
+header>nav>div*3>a[href="#" onmouseenter="showDescription(this)" onmouseleave="hideDescription()"]{item}+span.description{Description: test}
+
+Символ      Название        Что делает      Пример      Результат       
+>           Child           Вложенность     div>p       <div><p></p></div>  
++           Sibling         Соседство       h1+p        <h1></h1><p></p>
+^           Climb up        На уровень выше div>p^span  <div><p></p></div><span></span>
+*           Multiply        Умножение       ul>li*3     <ul><li></li><li></li><li></li></ul>
+()          Grouping        Группировка     (header>nav)+mainГруппирует логические блоки
+{} - контент
+[] - атрибут
+
+
+-->

@@ -1,0 +1,19 @@
+digraph {
+	node_0 [label="Thread-1
+start"]
+	node_1 [label="Thread-2
+start"]
+	node_0 -> node_1
+	node_2 [label="Thread-1
+work"]
+	node_1 -> node_2
+	node_3 [label="Thread-2
+work"]
+	node_2 -> node_3
+	node_4 [label="Thread-1
+end"]
+	node_3 -> node_4
+	node_5 [label="Thread-2
+end"]
+	node_4 -> node_5
+}

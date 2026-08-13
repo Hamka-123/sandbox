@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Оповещение об инциденте</title>
+</head>
+<body>
+    <h1 style="color: #d63031;">⚠️ ОПОВЕЩЕНИЕ ОБ ИНЦИДЕНТЕ</h1>
+    
+    <div style="background-color: #ffeaa7; padding: 15px; border-radius: 5px;">
+        <h3>Детали инцидента:</h3>
+        <ul>
+            <li><strong>Сервис:</strong> {{ service }}</li>
+            <li><strong>Уровень:</strong> {{ severity }}</li>
+            <li><strong>Время обнаружения:</strong> {{ datetime }} UTC</li>
+            <li><strong>Метрика:</strong> {{ metric }}</li>
+            <li><strong>Влияние:</strong> {{ impact }}</li>
+        </ul>
+    </div>
+    
+    <p><strong>Действия:</strong></p>
+    <ul>
+        <li>✅ Автоматически масштабирована БД</li>
+        <li>🔍 Анализ медленных запросов</li>
+        <li>👨‍💻 Инженеры уведомлены</li>
+    </ul>
+    
+    <p><a href="https://status.company.com/incident/123">📋 Страница инцидента</a></p>
+    <p><a href="https://slack.com/archives/incidents">💬 Slack: #incidents</a></p>
+</body>
+</html>

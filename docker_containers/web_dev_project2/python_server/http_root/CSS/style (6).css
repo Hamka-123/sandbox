@@ -1,0 +1,41 @@
+div{
+    display: inline-block;
+    padding: 50px;
+    margin: 10px;
+    border: 1px solid red;;
+
+    &#div-block-01{
+        background-color: rgb(137, 206, 48);;
+    }
+
+   &#div-block-02{
+        /* font-size: 10px;; */
+        font-size: 1.2em; /* Relative to parent */
+        font-size: 1.5rem;; /* Root EM (HTML element)*/
+
+    }
+   &#div-block-03{
+        /* Font weight */
+
+        font-weight: bolder;
+
+    }
+
+   &#div-block-04{
+        /* Font style */
+
+        font-style: italic;
+
+    }
+
+   &#div-block-05{
+        /* Font  */
+
+        font-family: 'Times New Roman', Times, serif;
+
+    }
+
+    
+
+
+}

@@ -1,0 +1,1 @@
+wsl -d GitServer -- sudo -u git git init --bare /srv/git/project1.git

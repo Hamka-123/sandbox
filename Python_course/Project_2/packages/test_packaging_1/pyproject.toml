@@ -1,0 +1,5 @@
+# My first custom package
+
+[project]
+name = "test_packaging_1"
+version = "0.1.1"

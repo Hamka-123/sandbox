@@ -1,0 +1,57 @@
+html{
+
+    body {
+        background-color: lightblue;
+        padding-top: 20px; ;
+
+        margin: 0px;
+        &>header{
+            background-color: darkblue;
+            color: #fff;
+            padding: 10px;
+
+            &>img{
+                display: inline-block;
+                width: 30px;
+                vertical-align: middle;
+            }
+            &>h1{
+                display: inline-block;
+                font-size: 1.2rem;
+                margin: 0px;;
+                vertical-align: middle;
+            }
+        }
+
+        &>main{
+            width: fit-content;
+            margin: auto;
+
+            &>div{
+                display: inline-block;
+                border: 1px solid darkblue;
+                padding: 10px 30px;
+                margin: 10px;
+                background-color: #fff;;
+                border-radius: 5px;
+                transition: all 2s;
+                ;
+
+                &:hover{
+                    box-shadow: 0px 0px 10px 0px #0005;
+                }
+
+                &:active{
+                    background-color: red;
+                }
+            }
+        }
+    }
+}
+
+#img11{
+    padding: 50px;
+    background-color: aqua;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+
+}

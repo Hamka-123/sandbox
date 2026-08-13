@@ -1,0 +1,73 @@
+input{
+    color: red;
+
+    &[type=reset]{
+        background-color: green;
+    }
+
+       &[type=number]{
+
+        color: #fff;
+
+        &:valid{
+            background-color: green;
+        }
+        &:invalid{
+            background-color: red;
+        }
+        
+       }
+
+
+}
+
+input[type=submit]{
+    color: yellow;
+}
+
+.my-button{
+
+    display: inline-block;
+    padding: 10px 30px;
+    margin: 10px;
+    border-radius: 5px;
+    border: 1px solid red;
+    color: red;
+
+    &:hover{
+        background-color: red;
+        color: #fff;
+        box-shadow: 0px 0px 10px 0px #000;
+    }
+
+    &:active{
+        position: relative;
+        top:2px;
+            box-shadow: unset;
+    }
+
+
+
+}
+
+
+p{
+
+    &::after{
+        /* content: "\2192"; */
+        content: "AVI";
+        color: red;
+        display: block;
+        text-align: right;
+    }
+
+    &::first-line{
+        background-color: lightgrey;
+    }
+
+}
+
+
+
+
+

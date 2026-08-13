@@ -1,0 +1,31 @@
+#grid-container1{
+    display: grid;
+    width: 800px;
+    height: 400px;
+    background-color: lightblue;
+    /* 
+    grid-template-columns: auto 200px 1fr 3fr; 
+    grid-template-columns: repeat(4,1fr);
+    grid-template-rows: repeat(4,1fr);
+    */
+    grid-template-columns: repeat(4,auto);
+    grid-template-rows: repeat(4,50px);
+    row-gap: 10px;;
+    column-gap: 20px;;
+    align-items: center;
+    justify-items: center;
+    align-content: center;
+    justify-content: center;
+
+    &>.grid-item{
+        background-color: gray;
+        padding: 5px;
+        width: fit-content;
+        &:nth-of-type(3){
+            background-color: red;
+            align-self: flex-end;
+
+        }
+
+    }
+}

@@ -1,0 +1,3 @@
+- изменить файл: Plan: 1 to add, 0 to change, 0 to destroy. -> # local_file.alina will be created. -> Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
+- удалить файл: Plan: 1 to add, 0 to change, 0 to destroy. -> # local_file.alina will be created. -> Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
+- убрать блок resource: Plan: 0 to add, 0 to change, 1 to destroy. -> # local_file.alina will be destroyed.  # (because local_file.alina is not in configuration) -> Apply complete! Resources: 0 added, 0 changed, 1 destroyed.

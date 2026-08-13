@@ -1,0 +1,56 @@
+=== ФАЙЛЫ, ОТРЕДАКТИРОВАННЫЕ 2025-10-03 ===
+
+ 1. log_2025-10-03.txt
+    Путь: working_log/log_2025-10-03.txt
+    Время изменения: 12:13:59
+    Размер: 0 байт
+    Расширение: .txt
+
+ 2. home_work4.py
+    Путь: TO_DO/home_work4.py
+    Время изменения: 11:40:35
+    Размер: 24880 байт
+    Расширение: .py
+
+ 3. logging_sample.py
+    Путь: TO_DO/logging_sample.py
+    Время изменения: 10:17:16
+    Размер: 4391 байт
+    Расширение: .py
+
+ 4. log_decorator_v1.py
+    Путь: TO_DO/log_decorator_v1.py
+    Время изменения: 10:15:28
+    Размер: 3440 байт
+    Расширение: .py
+
+ 5. tt.log
+    Путь: TO_DO/tt.log
+    Время изменения: 10:01:11
+    Размер: 1628 байт
+    Расширение: .log
+
+ 6. programming-paradigms.py
+    Путь: CHEET_SHEET/programming-paradigms.py
+    Время изменения: 10:17:41
+    Размер: 49234 байт
+    Расширение: .py
+
+ 7. RegEx.py
+    Путь: CHEET_SHEET/RegEx.py
+    Время изменения: 12:13:52
+    Размер: 8238 байт
+    Расширение: .py
+
+ 8. homework_files.py
+    Путь: TO_DO/read_CSV/homework_files.py
+    Время изменения: 11:38:18
+    Размер: 16147 байт
+    Расширение: .py
+
+ 9. numbers.txt
+    Путь: TO_DO/read_CSV/datafiles/numbers.txt
+    Время изменения: 12:13:59
+    Размер: 35 байт
+    Расширение: .txt
+

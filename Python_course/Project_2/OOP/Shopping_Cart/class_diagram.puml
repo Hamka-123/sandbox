@@ -1,0 +1,65 @@
+@startuml
+!theme plain
+
+class Shop {
+  - products: dict[UUID, Product]
+  - customers: dict[UUID, Customer]
+  - carts: dict[UUID, Cart]
+  --
+  + add_product(name, price, quantity): Product
+  + get_product_by_name(name): Product
+  + remove_product(product): void
+  + change_product_price(product, new_price): boolean
+  + add_customer(name): Customer
+}
+
+class Customer {
+  - __id: UUID
+  - _name: str
+  - _cart: Cart
+  --
+  + add_product_to_cart(product, quantity, shop): boolean
+  + show_cart(): str
+  + get_cart_total(): float
+  + remove_product_from_cart(product): boolean
+  + change_quantity(product, new_quantity): boolean
+  - _check_availability(product, quantity, shop): boolean
+}
+
+class Cart {
+  - __id: UUID
+  - _customer: Customer
+  - _products: List[Tuple[Product, int]]
+  --
+  + add_product(product, quantity): boolean
+  + remove_product(product): boolean
+  + change_quantity(product, new_quantity): boolean
+  + get_total(): float
+  + get_product_names(): List[str]
+}
+
+class Product {
+  - __id: UUID
+  - _name: str
+  - _price: float
+  - _quantity: int
+  --
+  + price.setter(price): str
+}
+
+Shop "1" *-- "many" Product
+Shop "1" *-- "many" Customer
+Customer "1" o-- "0..1" Cart
+Cart "1" *-- "many" Product
+
+note right of Customer::add_product_to_cart
+  Создает корзину при первом добавлении
+  Проверяет доступность через Shop
+end note
+
+note right of Cart::_products
+  Список кортежей (Product, quantity)
+  Хранит продукты и их количество
+end note
+
+@enduml

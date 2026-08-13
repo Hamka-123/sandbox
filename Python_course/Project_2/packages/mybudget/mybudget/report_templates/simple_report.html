@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Отчет {{ start_date }} - {{ end_date }}</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background-color: #f2f2f2; }
+        .positive { color: green; }
+        .negative { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Финансовый отчет</h1>
+    <p>Период: {{ start_date }} - {{ end_date }}</p>
+    
+    <h2>Итоги:</h2>
+    <p>Доходы: <span class="positive">{{ total_income }} {{ currency }}</span></p>
+    <p>Расходы: <span class="negative">{{ total_expense }} {{ currency }}</span></p>
+    <p>Баланс: <span class="{{ balance >= 0 ? 'positive' : 'negative' }}">{{ balance }} {{ currency }}</span></p>
+    
+    <h2>Доходы:</h2>
+    <table>
+        <tr><th>Дата</th><th>Сумма</th><th>Категория</th><th>Описание</th></tr>
+        {{ incomes_table }}
+    </table>
+    
+    <h2>Расходы:</h2>
+    <table>
+        <tr><th>Дата</th><th>Сумма</th><th>Категория</th><th>Описание</th></tr>
+        {{ expenses_table }}
+    </table>
+</body>
+</html>

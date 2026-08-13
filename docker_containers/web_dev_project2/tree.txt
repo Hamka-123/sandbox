@@ -1,0 +1,19 @@
+Folder PATH listing for volume Work1
+Volume serial number is A6C0-B2FE
+E:.
+|   tree.txt
+|   
++---Management_Scripts
+|       build_image.ps1
+|       run_container.ps1
+|       
+\---Python_Server_Image
+    |   .dockerignore
+    |   Dockerfile
+    |   
+    +---app
+    |       start_server.py
+    |       
+    \---http_root
+            index.html
+            

@@ -1,0 +1,30 @@
+#chat {
+  display: none;
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  z-index: 1;
+  background-color: grey;
+  width: 300px;
+  height: 200px;
+  align-content: center;
+  text-align: center;
+  color: white;
+  font-weight: 400;
+}
+
+#slider {
+    width: 500px;
+    height: 400px; /* Добавим высоту родителю */
+    display: flex; /* Современный способ центрирования */
+    justify-content: center; /* Центр по горизонтали */
+    align-items: center; /* Центр по вертикали */
+   
+
+    > img { /* Символ & указывает на родителя, в новом CSS можно и без него, но с ним нагляднее */
+        width: 300px;
+        height: 300px;
+        object-fit: cover; /* Сохраняем пропорции, обрезая лишнее */
+        border-radius: 10px;
+    }
+}

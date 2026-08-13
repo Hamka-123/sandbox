@@ -1,0 +1,9 @@
+[build-system]
+requires = ["setuptools>=42"]           # зависимости для сборки (минимальная версия setuptools 42)
+build-backend = "setuptools.build_meta" # какой бэкенд будет собирать проект
+
+[project]
+name = "console_controls"                # имя пакета (pip install mypack01)
+version = "0.1.0"                        # версия (SemVer: major.minor.patch)
+description = "Console controls package" # описание
+requires-python = ">=3.10"               # минимальная версия Python

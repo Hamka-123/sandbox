@@ -1,0 +1,41 @@
+@startuml
+actor User
+
+participant "ProcessView (CLI)" as View
+participant "ProcessManager (Facade)" as Manager
+participant "ProcessMonitor" as Monitor
+participant "ProcessAnalyzer" as Analyzer
+participant "ProcessOperator" as Operator
+participant "ProcessRepository" as Repo
+participant "TestProcessFactory" as Factory
+participant "ProcessEntity" as Entity
+
+== Step 1: Monitoring & Updating ==
+User -> View : request process list
+View -> Manager : get_process_list()
+Manager -> Monitor : update_process_list()
+Monitor -> Repo : fetch_all_processes()
+Repo -> Entity : create ProcessEntity objects
+Monitor -> Analyzer : filter/sort processes
+Analyzer -> Manager : return processed list
+Manager -> View : display process list
+View -> User : show updated processes
+
+== Step 2: Performing Operation on Process ==
+User -> View : select process (real or test)
+View -> Manager : perform_operation(pid, action)
+Manager -> Operator : execute_action(ProcessEntity, action)
+
+alt if test process
+    Operator -> Factory : execute_test_action(ProcessEntity, action)
+    Factory -> Entity : update status
+else if real process
+    Operator -> Repo : execute_real_action(ProcessEntity, action)
+    Repo -> Entity : update status
+end
+
+Operator -> Manager : return operation result
+Manager -> View : display result
+View -> User : show confirmation
+
+@enduml

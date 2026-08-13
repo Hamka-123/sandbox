@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL">
+  
+  <!-- Pool: Команда реагирования на инцидент -->
+  <process id="MassSystemFailureProcess">
+    
+    <!-- START -->
+    <startEvent id="startEvent">
+      <outgoing>SequenceFlow_1</outgoing>
+    </startEvent>
+
+    <!-- ШАГ 1: Обнаружение и оценка -->
+    <task id="detectionAssessment" name="Обнаружение и оценка сбоя (0-5 мин)">
+      <incoming>SequenceFlow_1</incoming>
+      <outgoing>SequenceFlow_2</outgoing>
+    </task>
+
+    <!-- ШАГ 2: Активация команды -->
+    <task id="teamActivation" name="Активация команды (5-10 мин)">
+      <incoming>SequenceFlow_2</incoming>
+      <outgoing>SequenceFlow_3</outgoing>
+    </task>
+
+    <!-- Параллельный шлюз для одновременных действий -->
+    <parallelGateway id="parallelGateway1">
+      <incoming>SequenceFlow_3</incoming>
+      <outgoing>SequenceFlow_4</outgoing>
+      <outgoing>SequenceFlow_5</outgoing>
+    </parallelGateway>
+
+    <!-- ШАГ 3: Коммуникация (параллельно) -->
+    <task id="communication" name="Коммуникация с пользователями">
+      <incoming>SequenceFlow_4</incoming>
+      <outgoing>SequenceFlow_6</outgoing>
+    </task>
+
+    <!-- ШАГ 4: Диагностика (параллельно) -->
+    <task id="diagnosis" name="Диагностика и поиск причины">
+      <incoming>SequenceFlow_5</incoming>
+      <outgoing>SequenceFlow_7</outgoing>
+    </task>
+
+    <!-- Соединение параллельных веток -->
+    <parallelGateway id="parallelGateway2">
+      <incoming>SequenceFlow_6</incoming>
+      <incoming>SequenceFlow_7</incoming>
+      <outgoing>SequenceFlow_8</outgoing>
+    </parallelGateway>
+
+    <!-- ШАГ 5: Восстановление -->
+    <task id="recovery" name="Восстановление работы систем">
+      <incoming>SequenceFlow_8</incoming>
+      <outgoing>SequenceFlow_9</outgoing>
+    </task>
+
+    <!-- Проверка успешности восстановления -->
+    <exclusiveGateway id="recoveryCheck" name="Системы восстановлены?">
+      <incoming>SequenceFlow_9</incoming>
+      <outgoing>SequenceFlow_10</outgoing>
+      <outgoing>SequenceFlow_11</outgoing>
+    </exclusiveGateway>
+
+    <!-- Если восстановление не удалось -->
+    <task id="escalate" name="Эскалация и дополнительные меры">
+      <incoming>SequenceFlow_11</incoming>
+      <outgoing>SequenceFlow_12</outgoing>
+    </task>
+
+    <!-- ШАГ 6: Пост-мортем -->
+    <task id="postMortem" name="Анализ инцидента и улучшения">
+      <incoming>SequenceFlow_10</incoming>
+      <incoming>SequenceFlow_12</incoming>
+      <outgoing>SequenceFlow_13</outgoing>
+    </task>
+
+    <!-- END -->
+    <endEvent id="endEvent">
+      <incoming>SequenceFlow_13</incoming>
+    </endEvent>
+
+    <!-- Sequence Flows -->
+    <sequenceFlow id="SequenceFlow_1" sourceRef="startEvent" targetRef="detectionAssessment"/>
+    <sequenceFlow id="SequenceFlow_2" sourceRef="detectionAssessment" targetRef="teamActivation"/>
+    <sequenceFlow id="SequenceFlow_3" sourceRef="teamActivation" targetRef="parallelGateway1"/>
+    <sequenceFlow id="SequenceFlow_4" sourceRef="parallelGateway1" targetRef="communication"/>
+    <sequenceFlow id="SequenceFlow_5" sourceRef="parallelGateway1" targetRef="diagnosis"/>
+    <sequenceFlow id="SequenceFlow_6" sourceRef="communication" targetRef="parallelGateway2"/>
+    <sequenceFlow id="SequenceFlow_7" sourceRef="diagnosis" targetRef="parallelGateway2"/>
+    <sequenceFlow id="SequenceFlow_8" sourceRef="parallelGateway2" targetRef="recovery"/>
+    <sequenceFlow id="SequenceFlow_9" sourceRef="recovery" targetRef="recoveryCheck"/>
+    <sequenceFlow id="SequenceFlow_10" sourceRef="recoveryCheck" targetRef="postMortem">
+      <conditionExpression>Системы восстановлены</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_11" sourceRef="recoveryCheck" targetRef="escalate">
+      <conditionExpression>Требуется эскалация</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_12" sourceRef="escalate" targetRef="postMortem"/>
+    <sequenceFlow id="SequenceFlow_13" sourceRef="postMortem" targetRef="endEvent"/>
+
+  </process>
+</definitions>

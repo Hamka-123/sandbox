@@ -1,0 +1,12 @@
+[Unit]
+Description=My Python Web Server
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 /home/hamka/PythonWebProject/python_server.py
+WorkingDirectory=/home/hamka/PythonWebProject
+Restart=always
+User=hamka
+
+[Install]
+WantedBy=multi-user.target

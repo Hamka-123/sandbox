@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Уведомление о развертывании</title>
+</head>
+<body>
+    <h1>🚀 Развертывание успешно завершено</h1>
+    
+    <div style="background-color: #f0f8ff; padding: 15px; border-radius: 5px;">
+        <h3>Детали развертывания:</h3>
+        <ul>
+            <li><strong>Версия:</strong> {{ version}}</li>
+            <li><strong>Окружение:</strong> {{ enviroment }}</li>
+            <li><strong>Время:</strong> {{ datetime }}</li>
+            <li><strong>Коммит:</strong> {{ commit_number }} - {{ commit_name }}</li>
+        </ul>
+    </div>
+    
+    <p><a href="https://grafana.company.com/dashboard">📊 Перейти к мониторингу</a></p>
+    <p><a href="https://jenkins.company.com/job/deploy/125">🔍 Посмотреть детали сборки</a></p>
+    
+    <p style="color: #666; font-size: 12px;">
+        Это автоматическое сообщение. Пожалуйста, не отвечайте на него.
+    </p>
+</body>
+</html>

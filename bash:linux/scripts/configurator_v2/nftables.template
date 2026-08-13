@@ -1,0 +1,47 @@
+#!/usr/sbin/nft -f
+
+flush ruleset
+
+table inet filter {
+    chain input {
+        type filter hook input priority 0; policy drop;
+
+        # Разрешаем петлю и установленные соединения
+        iif lo accept
+        ct state established,related accept
+
+        # Открываем SSH
+        tcp dport 22 accept
+
+        # Разрешаем пинг
+        icmp type echo-request accept
+
+        # Разрешаем DHCP и DNS только из локальных сетей
+        iifname "LAN*" udp dport { 67, 53 } accept
+        iifname "LAN*" tcp dport 53 accept
+    }
+
+    chain forward {
+        type filter hook forward priority 0; policy drop;
+
+        # LAN -> WAN (Интернет)
+        iifname "LAN*" oifname "WAN" accept
+
+        # Ответные пакеты: WAN -> LAN
+        iifname "WAN" oifname "LAN*" ct state established,related accept
+
+        # Маршрутизация МЕЖДУ локальными сетями (LAN1 <-> LAN2)
+        iifname "LAN*" oifname "LAN*" accept
+    }
+
+    chain output {
+        type filter hook output priority 0; policy accept;
+    }
+}
+
+table ip nat {
+    chain postrouting {
+        type nat hook postrouting priority 100;
+        oifname "WAN" masquerade
+    }
+}

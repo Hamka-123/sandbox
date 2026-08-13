@@ -1,0 +1,23 @@
+# Игнорируем гит
+.git
+.gitignore
+
+# Игнорируем зависимости (они поставятся внутри через RUN)
+node_modules
+npm-debug.log
+venv
+__pycache__
+
+# Игнорируем секреты
+.env
+*.key
+credentials.json
+
+# Игнорируем мусор ОС
+.DS_Store
+Thumbs.db
+
+# Игнорируем папку сборки (если ты собираешь бинарник внутри Docker)
+dist
+target
+build

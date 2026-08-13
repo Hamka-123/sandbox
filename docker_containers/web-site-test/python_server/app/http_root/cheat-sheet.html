@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern HTML & CSS Demo 2026</title>
+    <link rel="stylesheet" href="new.css">
+</head>
+<body>
+
+    <header>
+        <h1>Modern Web Lab</h1>
+        <p>Демонстрация функций без единой строки JS</p>
+    </header>
+
+    <main class="container">
+        <section class="demo-card">
+            <h2>1. Native Popover</h2>
+            <button popovertarget="info-popover" class="btn">Нажми на меня</button>
+            <div id="info-popover" popover class="modern-popover">
+                <h3>Привет из Top Layer! 🚀</h3>
+                <p>Я открылся нативно через атрибут <code>popover</code>.</p>
+            </div>
+        </section>
+        
+        <section class="demo-card">
+            <h2>2. Dialog Element</h2>
+            <button onclick="document.getElementById('myDialog').showModal()" class="btn secondary">Открыть модалку</button>
+            <dialog id="myDialog">
+                <form method="dialog">
+                    <h3>Модальное окно</h3>
+                    <p>Браузер сам блокирует фон и обрабатывает клавишу Esc.</p>
+                    <button class="btn">Закрыть</button>
+                </form>
+            </dialog>
+        </section>
+        <section class="demo-card">
+    <h2>3. Мультиязычность и Текст (Typography)</h2>
+    
+    <div class="language-demo">
+        <p>Пример направления текста <strong>RTL</strong>:</p>
+        <blockquote dir="rtl" lang="he">
+            עברית היא שפה מדהימה! (Иврит — потрясающий язык!)
+        </blockquote>
+    </div>
+
+    <hr>
+
+    <div class="text-features">
+        <p>Использование тега <code>&lt;mark&gt;</code>: <mark>это важный акцент</mark>.</p>
+        
+        <p>Тег <code>&lt;abbr&gt;</code> с подсказкой: <abbr title="Cascading Style Sheets">CSS</abbr> — это стили.</p>
+        
+        <p>Вставка кода: <code>const db = 'PostgreSQL';</code></p>
+        
+        <p>Текстовое редактирование (нативно):</p>
+        <div contenteditable="plaintext-only" class="editable-box">
+            Нажми на меня и попробуй стереть этот текст (только чистый текст).
+        </div>
+    </div>
+</section>
+
+<section class="demo-card">
+    <h2>4. Нативный Аккордеон (Details/Summary)</h2>
+    <details>
+        <summary>Нажми, чтобы узнать секрет SQL</summary>
+        <p>PostgreSQL — это не просто база данных, это целая экосистема!</p>
+    </details>
+</section>
+        <section class="demo-card">
+            <h2>5. Формы </h2>
+            <details>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse odio quaerat optio, inventore ipsum tempora, eligendi facere enim aliquam quibusdam repellat et, perferendis excepturi quia similique assumenda rem totam explicabo.
+            </details>
+            <form>
+                <input type="button" value="click me">
+                <input type="text">
+                <input type="checkbox">
+                <input type="color">
+
+                <input type="email" name="" id="">
+                <input type="file" name="" id="">
+                <input type="hidden" name="">
+                <input type="image" src="" alt="">
+
+                <input type="date">
+                <input type="datetime" name="" id="">
+                <input type="datetime-local" name="" id="">
+                <input type="month" name="" id="">
+                <input type="week" name="" id="">
+                <input type="date">
+                <input type="time" name="" id="">
+
+                <input type="number" name="" id="">
+                <input type="password" name="" id="">
+                <input type="radio" name="" id="">
+                <input type="range" name="" id="">
+            
+                <input type="tel" name="" id="">
+                <input type="time" name="" id="">
+                <input type="url" name="" id="">
+
+                <input type="reset" value="">
+                <input type="search" name="" id="">
+                <input type="submit" value="">
+                <textarea name="" id="">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Assumenda ab harum tempore dolore incidunt, reprehenderit debitis consectetur officia tempora! Aperiam ex inventore similique nesciunt dicta accusantium cupiditate et obcaecati sapiente!</textarea>
+                
+            </form>
+        </section>
+        <p>
+  Пользователь <bdi>אלכסנדר</bdi> оставил комментарий. 
+  </p>
+        <section class="support-section">
+            <h2>Таблица поддержки функций (2026)</h2>
+            <table class="support-table">
+                <thead>
+                    <tr>
+                        <th>Функция</th>
+                        <th>Chrome / Edge</th>
+                        <th>Firefox</th>
+                        <th>Safari</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Popover API</td>
+                        <td>114+ (✅)</td>
+                        <td>125+ (✅)</td>
+                        <td>17+ (✅)</td>
+                        <td>Standard</td>
+                    </tr>
+                    <tr>
+                        <td>CSS Nesting</td>
+                        <td>112+ (✅)</td>
+                        <td>117+ (✅)</td>
+                        <td>16.5+ (✅)</td>
+                        <td>Stable</td>
+                    </tr>
+                    <tr>
+                        <td>:has() selector</td>
+                        <td>105+ (✅)</td>
+                        <td>121+ (✅)</td>
+                        <td>15.4+ (✅)</td>
+                        <td>Game Changer</td>
+                    </tr>
+                    <tr>
+                        <td>Container Queries</td>
+                        <td>105+ (✅)</td>
+                        <td>110+ (✅)</td>
+                        <td>16+ (✅)</td>
+                        <td>Must Use</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+</body>
+</html>

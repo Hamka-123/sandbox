@@ -1,0 +1,32 @@
+import pathlib
+
+
+users = [
+    ["1", "Rosy", "Wileman", "rwileman0@myspace.com", "Female", "17.248.161.92"],
+    ["2", "Osgood", "Radden", "oradden1@umich.edu", "Male", "159.227.9.24"],
+    ["3", "Fabian", "Brickhill", "fbrickhill2@godaddy.com", "Male", "93.31.17.116"],
+    ["4", "Moyna", "Leaf", "mleaf3@stanford.edu", "Female", "99.151.84.30"],
+    ["5", "Corene", "Amar", "camar4@drupal.org", "Female", "225.151.243.132"],
+    ["6", "Jed", "Strand", "jstrand5@vinaora.com", "Male", "136.19.198.156"],
+    ["7", "Kandy", "Burrell", "kburrell6@canalblog.com", "Female", "198.10.185.27"],
+    ["8", "Joy", "Kearsley", "jkearsley7@liveinternet.ru", "Female", "188.121.30.210"],
+    ["9", "Fenelia", "Frankish", "ffrankish8@drupal.org", "Female", "184.33.192.199"],
+    ["10", "Urbanus", "Conachie", "uconachie9@umn.edu", "Male", "238.243.25.154"],
+]
+
+#CSV headers:
+# id,first_name,last_name,email,gender,ip_address
+
+# write to CSV file
+'''
+id,first_name,last_name,email,gender,ip_address
+1,Rosy,Wileman,rwileman0@myspace.com,Female,17.248.161.92
+2,Osgood,Radden,oradden1@umich.edu,Male,159.227.9.24
+
+
+'''
+headers = ["id", "first_name", "last_name", "email", "gender", "ip_address"]
+with open(pathlib.Path(__file__).parent.parent.joinpath("data_files", "users.csv"), "w") as f:
+    f.write(",".join(headers) + "\n")
+    for user in users:
+        f.write(",".join(user) + "\n")

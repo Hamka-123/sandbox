@@ -1,0 +1,341 @@
+# ==============================================================================
+# 📋 ШПАРГАЛКА ПО ФУНКЦИЯМ TERRAFORM
+
+# https://developer.hashicorp.com/terraform/language/functions
+# ==============================================================================
+# Инструкция: 
+# Запусти `terraform apply`, чтобы увидеть результаты в терминале.
+# Или пропиши эти функции в консоли `terraform console` и посмотри результат
+# Можешь менять значения в блоке `locals` ниже для экспериментов.
+
+locals {
+  # Входные данные для тестов
+  raw_name       = "ALINA"
+  env_parts      = ["rg", "alina", "dev"]
+  ip_address     = "192.168.1.1"
+  vms_list       = ["vm-web", "vm-db", "vm-cache"]
+  regions        = ["westeurope", "northeurope"]
+  settings_map   = { sku = "Standard", tier = "Free" }
+  maybe_null     = null
+  fallback_name  = "alina-azure-vm"
+  dirty_string   = "   alina-azure-vm   "
+  complex_text   = "rg-alina-prod-01"
+  base64_encoded = "YWxpbmEtZGV2b3Bz"
+  list_a         = ["westeurope", "northeurope"]
+  list_b         = ["northeurope", "francecentral", "germanywestcentral"]
+  nested_lists   = [["vm1", "vm2"], ["vm3"], ["vm4", "vm5"]]
+  duplicate_list = ["prod", "dev", "prod", "stage", "dev"]
+  numbers_list   = [10, 5, 100, 42]
+  tags_prod      = { env = "prod", owner = "alina" }
+  tags_global    = { project = "azure-cloud", billing = "it-dept" }
+  list_of_values = ["Standard_B1s", "Standard_B2s"]
+  json_string    = "{\"sku\": \"Premium\", \"capacity\": 3}"
+  empty_list     = []
+  map_with_vms   = { vm1 = "Standard_B1s", vm2 = "Standard_B2s" }
+  boolean_true   = true
+  vnet_cidr      = "10.0.0.0/16"
+}
+# ==============================================================================
+# 🖥️ ВЫВОД РЕЗУЛЬТАТОВ (OUTPUTS)
+# ==============================================================================
+
+output "СТРОКОВЫЕ_ФУНКЦИИ" {
+  value = {
+    # --- БАЗОВЫЕ (Твои исходные) ---
+    upper_example   = upper("alina")                      # "ALINA" (Сделать капсом)
+    lower_example   = lower(local.raw_name)               # "alina" (Перевести в маленький регистр)
+    join_example    = join("-", local.env_parts)          # "rg-alina-dev" (Сшить список через дефис)
+    replace_example = replace(local.ip_address, ".", "-") # "192-168-1-1" (Заменить точки на дефисы)
+
+    # --- ЧИСТКА И ОБРЕЗКА (Trim функции) ---
+    trim_space = trimspace(local.dirty_string)      # "alina-azure-vm" (Убирает все пробелы в начале и конце)
+    trim_exact = trim("rg-alina-dev", "rg-")        # "alina-dev" (Убирает указанные символы с КРАЕВ строки)
+    trim_left  = trimprefix("rg-alina-dev", "rg-")  # "alina-dev" (Безопасно удаляет префикс, если он есть)
+    trim_right = trimsuffix("rg-alina-dev", "-dev") # "rg-alina" (Безопасно удаляет суффикс, если он есть)
+
+    # --- ПОИСК И ПРОВЕРКА (Обычно для условий / тернарок) ---
+    startswith_check = startswith("rg-alina", "rg-")        # true (Проверяет, начинается ли строка с префикса)
+    endswith_check   = endswith("rg-alina-dev", "-dev")     # true (Проверяет, заканчивается ли строка суффиксом)
+    str_contains     = strcontains("rg-alina-prod", "prod") # true (Проверяет, есть ли подстрока ВНУТРИ текста)
+
+    # --- РАЗБИВКА И СРЕЗЫ ---
+    split_example = split(".", "192.168.1.1") # ["192", "168", "1", "1"] (Режет строку в список по разделителю)
+    substr_simple = substr("alina-vm", 0, 5)  # "alina" (Вырезает кусок строки: откуда, сколько букв)
+
+    # --- СЛОЖНЫЙ ПОИСК (Регулярные выражения / Regex) ---
+    regex_find = regex("[a-z]+-[0-9]+", "vm-42")   # "vm-42" (Находит первое совпадение по регулярке)
+    regex_all  = regexall("[0-9]+", "192.168.1.1") # ["192", "168", "1", "1"] (Находит ВЕЕЕ СОВПАДЕНИЯ в виде списка)
+
+    # ИСПРАВЛЕНО И СОХРАНЕНО: Заменили несуществующую функцию на связку can(regex(...))
+    str_matching = can(regex("^[a-z]+-vm$", "prod-vm")) # true (Проверяет строку на соответствие регулярному выражению)
+
+    # --- РАБОТА С РЕГИСТРОМ И ТЕКСТОМ (Заголовки) ---
+    title_example = title("hello alina") # "Hello Alina" (Делает первую букву каждого слова заглавной)
+
+    # --- КОДИРОВАНИЕ И ДЕКОДИРОВАНИЕ ---
+    base64_encode_ex = base64encode("alina-devops")       # "YWxpbmEtZGV2b3Bz" (Шифрует в base64 для конфигураций/cloud-init)
+    base64_decode_ex = base64decode(local.base64_encoded) # "alina-devops" (Расшифровывает обратно в читаемый текст)
+
+    # --- ДРУГИЕ ПОЛЕЗНЫЕ СТРОКОВЫЕ ТРАНСФОРМАЦИИ ---
+    format_example = format("Hello, %s! Total VMs: %d", "Alina", 3) # "Hello, Alina! Total VMs: 3" (Форматирование в стиле Си/Go)
+    uuid_generate  = uuid()                                         # Генерирует случайный уникальный UUID (каждый раз новый при apply)
+    uuid_v5_static = uuidv5("dns", "alina.dev")                     # Статичный UUID на основе домена (всегда будет одинаковым)
+  }
+}
+
+output "ФУНКЦИИ_СО_СПИСКАМИ" {
+  value = {
+    # --- БАЗОВЫЕ (Твои исходные) ---
+    length_list      = length(local.vms_list)             # 3 (Количество элементов)
+    length_string    = length("terraform")                # 9 (Количество букв в строке)
+    element_first    = element(local.regions, 0)          # "westeurope" (Элемент по индексу)
+    element_overflow = element(local.regions, 2)          # "westeurope" (Индекс выше длины -> ушел на второй круг)
+    contains_true    = contains(local.vms_list, "vm-db")  # true (Проверка на наличие)
+    contains_false   = contains(local.vms_list, "vm-app") # false
+
+    # --- ТРАНСФОРМАЦИЯ И ЧИСТКА СПИСКОВ ---
+    distinct_example = distinct(local.duplicate_list)     # ["prod", "dev", "stage"] (Удаляет дубликаты, оставляя только уникальные)
+    flatten_example  = flatten(local.nested_lists)        # ["vm1", "vm2", "vm3", "vm4", "vm5"] (Схлопывает вложенные списки в один плоский)
+    reverse_example  = reverse(local.vms_list)            # ["vm-cache", "vm-db", "vm-web"] (Разворачивает список задом наперед)
+    compact_example  = compact(["a", "", "b", null, "c"]) # ["a", "b", "c"] (Выкидывает из списка пустые строки "" и null)
+
+    # --- СОРТИРОВКА И ПОИСК ---
+    sort_strings = sort(["beta", "gamma", "alpha"])                                     # ["alpha", "beta", "gamma"] (Сортирует строки по алфавиту)
+    min_number   = min(local.numbers_list...)                                           # 5 (Находит минимальное число. Три точки '...' нужны, чтобы раскрыть список в аргументы)
+    max_number   = max(local.numbers_list...)                                           # 100 (Находит максимальное число из списка)
+    matchkeys_ex = matchkeys(["vm-1", "vm-2", "vm-3"], ["dev", "prod", "dev"], ["dev"]) # ["vm-1", "vm-3"] (Фильтрует первый список на основе совпадений во втором)
+
+    # --- МАТЕМАТИКА МНОЖЕСТВ (Скрещивание списков) ---
+    concat_example = concat(local.list_a, local.list_b) # Склеивает списки в один "как есть": ["westeurope", "northeurope", "northeurope", "francecentral", "germanywestcentral"]
+
+    # ИСПРАВЛЕНО И СОХРАНЕНО: Заменили выдуманный union() на рабочую комбинацию distinct(concat(...))
+    union_example = distinct(concat(local.list_a, local.list_b)) # Объединяет списки и убирает дубли: ["westeurope", "northeurope", "francecentral", "germanywestcentral"]
+
+    setintersection = setintersection(local.list_a, local.list_b)        # ["northeurope"] (Возвращает только те элементы, которые есть И там, И там)
+    setproduct_ex   = setproduct(["vm1", "vm2"], ["subnetA", "subnetB"]) # Создает все возможные комбинации пар: [["vm1", "subnetA"], ["vm1", "subnetB"], ...]
+
+    # --- СРЕЗЫ И ИНДЕКСЫ ---
+    slice_example = slice(local.vms_list, 0, 2)    # ["vm-web", "vm-db"] (Вырезает кусок списка с индекса по индекс, не включая последний)
+    index_find    = index(local.vms_list, "vm-db") # 1 (Показывает порядковый номер/индекс элемента в списке. Если элемента нет — выдаст ошибку)
+
+    # --- ГЕНЕРАЦИЯ СПИСКОВ ---
+    range_simple  = range(3)        # [0, 1, 2] (Генерирует список чисел от 0 до указанного)
+    range_complex = range(1, 10, 2) # [1, 3, 5, 7, 9] (Генерирует числа: от, до, с шагом)
+  }
+}
+
+output "РАБОТА_СО_СЛОВАРЯМИ_И_ТИПАМИ" {
+  value = {
+    # --- БАЗОВЫЕ (Твои исходные) ---
+    lookup_exist = lookup(local.settings_map, "sku", "Basic")  # "Standard" (Ключ sku есть -> вернет Standard)
+    lookup_miss  = lookup(local.settings_map, "size", "Basic") # "Basic" (Ключа size нет -> вернет дефолт Basic)
+    map_keys     = keys(local.settings_map)                    # ["sku", "tier"] (Вытащить только ключи списка)
+    explicit_num = tonumber("42")                              # 42 (Превратить строку в число)
+    explicit_str = tostring(100)                               # "100" (Превратить число в строку)
+
+    # --- СЛОВАРНЫЕ ТРАНСФОРМАЦИИ ---
+    map_values    = values(local.settings_map)                # ["Standard", "Free"] (Вытаскивает только ЗНАЧЕНИЯ из словаря)
+    merge_example = merge(local.tags_global, local.tags_prod) # { project = "azure-cloud", billing = "it-dept", env = "prod", owner = "alina" } (Сливает несколько словарей в один. Идеально для объединения тегов Azure)
+
+    # --- СОЗДАНИЕ СЛОВАРЕЙ НА ЛЕТУ ---
+    zipmap_example = zipmap(["dev", "prod"], local.list_of_values) # { "dev" = "Standard_B1s", "prod" = "Standard_B2s" } (Берет список ключей и список значений и «сшивает» их в полноценный словарь)
+
+    # --- ПРОВЕРКА И ПРИВЕДЕНИЕ ТИПОВ ---
+    can_check_true  = can(local.settings_map.sku)                  # true (Проверяет, можно ли вычислить выражение без ошибки. Если ключ есть — вернет true)
+    can_check_false = can(local.settings_map.non_existent)         # false (Ключа нет, но вместо падения кода Терраформ просто отдаст false)
+    try_example     = try(local.settings_map.size, "Standard_B1s") # "Standard_B1s" (Пытается прочитать первое значение. Если там ошибка или null — берет запасное. Родственник lookup, но работает для любых структур данных)
+
+    # --- ПРОВЕРКИ КОНКРЕТНЫХ ТИПОВ ---
+    is_bool = tobool("true")                 # true (Явное приведение к булеву типу)
+    is_list = tolist(["a", "b"])             # ["a", "b"] (Приведение к строгому типу list)
+    is_set  = toset(["prod", "dev", "prod"]) # ["dev", "prod"] (Превращает в SET — множество, автоматически удаляя дубликаты)
+
+    # --- СЕРЬЕЗНАЯ МАГИЯ (Парсинг данных) ---
+    json_decode_ex = jsondecode(local.json_string) # Превращает сырую JSON-строку в полноценный HCL-объект, к которому можно обращаться через точку (например, json_decode_ex.sku)
+  }
+}
+
+output "ЛОГИКА_И_УСЛОВИЯ" {
+  value = {
+    # --- БАЗОВЫЕ (Твои исходные) ---
+    ternary_example  = length(local.vms_list) > 2 ? "Standard_D2s_v5" : "Standard_B1s"   # "Standard_D2s_v5"
+    coalesce_example = coalesce(local.maybe_null, "", local.fallback_name, "default-vm") # "alina-azure-vm" (Пропустит null и пустую строку, вернет первое живое значение)
+
+    # --- ФУНКЦИИ КАТЕГОРИИ COALESCE (Поиск выживших данных) ---
+    # coalescelist: ищет и возвращает ПЕРВЫЙ список, который НЕ является пустым
+    coalescelist_ex = coalescelist(local.empty_list, local.regions, ["fallback-region"]) # ["westeurope", "northeurope"]
+
+    # --- ЛОГИЧЕСКИЕ ПРОВЕРКИ И ВАЛИДАЦИЯ (Для блоков validation/precondition) ---
+    # alltrue: возвращает true, ТОЛЬКО если ВСЕ элементы в списке истинны (Логическое И для массивов)
+    alltrue_example = alltrue([5 > 3, "alina" == "alina", local.boolean_true]) # true
+    alltrue_fail    = alltrue([5 > 3, "alina" == "max"])                       # false
+
+    # anytrue: возвращает true, если хотя бы ОДИН элемент в списке истинен (Логическое ИЛИ для массивов)
+    anytrue_example = anytrue([5 > 10, "apple" == "orange", local.boolean_true]) # true (Так как boolean_true равен true)
+
+    # --- ДИНАМИЧЕСКИЕ УСЛОВИЯ НА ОСНОВЕ НАЛИЧИЯ (Альтернатива if-else) ---
+    # Проверка существования ключа через lookup в роли условия для тернарки
+    has_key_ternary = lookup(local.settings_map, "sku", null) != null ? "Используем SKU" : "SKU не задан"
+
+    # Безопасная проверка пустоты списка/словаря (Защита от ошибок index out of bounds)
+    is_list_empty = length(local.empty_list) == 0 ? "Список пуст, деплоить нечего" : "Запускаем деплой"
+
+    # Сложная тернарка с проверкой типа данных (Защита: если передан пустой объект)
+    fallback_map_check = local.map_with_vms != {} ? local.map_with_vms.vm1 : "Standard_B1s"
+  }
+}
+# ==============================================================================
+# 🌐 СЕТЕВЫЕ ФУНКЦИИ (IP И CIDR) — Главный инструмент для Azure VNet
+# ==============================================================================
+
+output "СЕТЕВЫЕ_ФУНКЦИИ" {
+  value = {
+    # cidrsubnet(prefix, newbits, netnum) — Нарезает VNet на подсети. 
+    # Берет /16, добавляет 8 бит (получается маска /24) и берет 0-ю и 1-ю подсети.
+    web_subnet_cidr = cidrsubnet(local.vnet_cidr, 8, 0) # "10.0.0.0/24"
+    db_subnet_cidr  = cidrsubnet(local.vnet_cidr, 8, 1) # "10.0.1.0/24"
+
+    # cidrhost(prefix, hostnum) — Вычисляет конкретный IP-адрес внутри подсети.
+    # Полезно, если для Azure Firewall или балансировщика нужен статический IP.
+    firewall_ip = cidrhost("10.0.0.0/24", 4)  # "10.0.0.4"
+    last_ip     = cidrhost("10.0.0.0/24", -2) # "10.0.0.254" (минус считает с конца подсети)
+
+    # cidrnetmask(prefix) — Переводит префикс в классическую маску подсети.
+    # Иногда старые модули или сторонние API Azure требуют маску именно в таком виде.
+    netmask = cidrnetmask("10.0.0.0/24") # "255.255.255.0"
+
+    # cidrsubnets(prefix, newbits...) — Нарезает сеть сразу на несколько подсетей разного размера за один раз.
+    # Берет 10.0.0.0/16 и делает из неё первую подсеть /24 (16+8), вторую /24 (16+8) и третью /20 (16+4).
+    bulk_subnets = cidrsubnets("10.0.0.0/16", 8, 8, 4) # ["10.0.0.0/24", "10.0.1.0/24", "10.0.16.0/20"]
+  }
+}
+
+# ==============================================================================
+# 📂 РАБОТА С ФАЙЛАМИ И ШАБЛОНАМИ
+# ==============================================================================
+output "ФАЙЛОВЫЕ_ФУНКЦИИ" {
+  value = {
+    # fileexists(path) — Проверяет, лежит ли файл по указанному пути. Защищает код от падения.
+    has_ssh_key = fileexists("~/.ssh/id_rsa.pub") # true или false
+
+    # file(path) — Читает файл и возвращает его содержимое как строку.
+    # Постоянно используется для загрузки публичного SSH-ключа для Azure VM.
+    # ssh_key_content = file("${path.module}/id_rsa.pub")
+
+    # templatefile(path, vars) — Читает файл-шаблон (обычно .sh or .txt) и подставляет туда переменные Терраформа.
+    # Самый частый кейс — генерация скриптов инициализации (Cloud-Init / Custom Script Extension).
+    # user_data = templatefile("${path.module}/init.tftpl", { admin_name = "alina", env = "prod" })
+  }
+}
+
+# ==============================================================================
+# 🔒 КРИПТОГРАФИЯ, ХЕШИРОВАНИЕ И СЕКРЕТЫ
+# ==============================================================================
+# ИСПРАВЛЕНО: Добавлен sensitive = true, чтобы разрешить вывод скрытых данных в аутпут
+output "КРИПТОГРАФИЯ_И_БЕЗОПАСНОСТЬ" {
+  sensitive = true
+  value = {
+    # sensitive(value) — Помечает данные как секретные. 
+    # После этого Терраформ скроет это значение в терминале при plan/apply и напишет (sensitive value).
+    secret_output = sensitive("my-super-azure-password-123")
+
+    # sha256(string) — Генерирует SHA256 хэш из строки. 
+    # Используется для создания уникальных имен или триггеров передеплоя (например, если конфиг поменялся).
+    string_hash = sha256("alina-config-v1") # "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+
+    # filesha256(path) — Считает хэш самого файла на диске. 
+    # Мега-полезно для Azure Functions: если хэш zip-архива с кодом изменился, Терраформ поймет, что нужно залить новый код.
+    # zip_hash = filesha256("${path.module}/app_code.zip")
+
+    # md5(string) — Старый добрый MD5 хэш. Иногда требуется для проверки целостности Azure Storage Blobs.
+    md5_example = md5("hello") # "5d41402abc4b2a76b9719d911017c592"
+  }
+}
+
+# ==============================================================================
+# 🗮️ МАТЕМАТИЧЕСКИЕ ФУНКЦИИ
+# ==============================================================================
+output "МАТЕМАТИЧЕСКИЕ_ФУНКЦИИ" {
+  value = {
+    # abs(number) — Модуль числа (всегда превращает отрицательное в положительное).
+    absolute = abs(-42) # 42
+
+    # ceil(number) — Округляет дробь до ближайшего целого В БОЛЬШУЮ сторону.
+    round_up = ceil(4.1) # 5
+
+    # floor(number) — Округляет дробь до ближайшего целого В МЕНЬШУЮ сторону.
+    round_down = floor(4.9) # 4
+
+    # pow(base, exponent) — Возведение в степень.
+    power = pow(2, 3) # 8 (два в кубе)
+
+    # log(number, base) — Логарифм числа по заданному основанию.
+    logarithm = log(16, 2) # 4
+  }
+}
+
+# ==============================================================================
+# 🪆 1. ФУНКЦИИ РАБОТЫ С ТИПАМИ ОБЪЕКТОВ (ДЛЯ ПРОДВИНУТЫХ МОДУЛЕЙ)
+# ==============================================================================
+# Эти функции нужны, когда ты пишешь универсальный модуль и хочешь проверить,
+# что именно пользователь передал в переменные, или на лету пересобрать сложный объект.
+
+output "ФУНКЦИИ_ОБЪЕКТОВ" {
+  value = {
+    # defaults(value, default_value) — Накатывает дефолтные значения на пустые (null) поля внутри сложных объектов.
+    # Позволяет пользователю не заполнять ВСЕ поля в огромной map, Терраформ сам допишет дефолты.
+    # Примечание: Функция работает в сочетании с экспериментальными фичами или специальным синтаксисом объектных типов.
+
+    # lookup() для объектов — Мы учили lookup для Map, но начиная с версии 1.7+, 
+    # lookup можно применять и к объектам (Object), чтобы безопасно вытаскивать атрибуты, которых может не быть.
+  }
+}
+
+# ==============================================================================
+# 📋 2. ФУНКЦИИ КОДИРОВАНИЯ ЭКЗОТИЧЕСКИХ ФОРМАТОВ (ЯЗЫКИ РАЗМЕТКИ)
+# ==============================================================================
+# Мы разобрали JSON и Base64 (они используются в 99% задач Azure), но Терраформ 
+# также умеет нативно работать с YAML и CSV.
+
+output "ЭКЗОТИЧЕСКИЕ_ФОРМАТЫ" {
+  value = {
+    # yamlencode(value) — Берет объект/список Терраформа и превращает его в красивую валидную YAML-строку.
+    # Полезно, если ты генерируешь конфиги для Kubernetes (Helm-чарты) или настройки для Ansible.
+    yaml_text = yamlencode({
+      apps = ["frontend", "backend"]
+      port = 8080
+    })
+
+    # yamldecode(string) — Обратная операция. Читает YAML-файл или строку и превращает в объект HCL.
+    # Если ты хранишь настройки своих Azure-виртуалок в файле config.yaml, эта функция его распарсит.
+    # yaml_object = yamldecode(file("config.yaml"))
+
+    # csvdecode(string) — Читает строку в формате CSV (значения через запятую) и превращает в список словарей.
+    # Мега-фича, если менеджеры прислали список сотрудников или отделов в Excel, ты сохранила его в CSV
+    # и хочешь одной строчкой кода создать под них Azure Active Directory группы.
+    csv_object = csvdecode("id,name\n1,alina\n2,max") # [ {id="1", name="alina"}, {id="2", name="max"} ]
+  }
+}
+
+# ==============================================================================
+# 📅 3. ФУНКЦИИ ДАТЫ И ВРЕМЕНИ
+# ==============================================================================
+# Нужны, когда нужно автоматически поставить тег с датой создания ресурса,
+# или задать время жизни для временных доступов (Shared Access Signatures в Azure).
+
+output "ДАТА_И_ВРЕМЯ" {
+  value = {
+    # timestamp() — Возвращает текущую дату и время в формате UTC (ISO 8601).
+    # Внимание: Эта функция обновляется ПРИ КАЖДОМ запуске terraform apply, 
+    # поэтому если привязать её к имени ресурса, Терраформ будет пытаться пересоздавать его каждый раз!
+    current_time = timestamp() # "2026-07-10T09:58:23Z"
+
+    # timeadd(timestamp, duration) — Добавляет время к указанной дате.
+    # Например, высчитать время, когда временный токен в Azure должен протухнуть через 24 часа.
+    expire_time = timeadd(timestamp(), "24h") # Прибавит ровно сутки к текущему времени
+
+    # formatdate(format, timestamp) — Форматирует системную дату в красивый человеческий вид.
+    # Позволяет сделать тег "DateCreated" аккуратным, например "10 Jul 2026".
+    pretty_date = formatdate("DD MMM YYYY", timestamp()) # "10 Jul 2026"
+  }
+}

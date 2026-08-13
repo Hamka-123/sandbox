@@ -1,0 +1,1 @@
+wsl -d GitDeveloper1 -- ssh -p 2222 user1@172.26.74.84

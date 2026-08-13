@@ -1,0 +1,131 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+skinparam nodesep 10
+skinparam ranksep 10
+
+' =======================
+'  Layers / Packages
+' =======================
+package "Presentation Layer" {
+    class ProcessView {
+        +display_processes(processes)
+        +display_count(processes)
+    }
+}
+
+package "Application Layer / Facade" {
+    class ProcessManager {
+        +get_process_list(count)
+        +display_processes(count)
+        +display_processes_stat(count)
+        +find_processes_by_name(name)
+        +get_top_cpu_processes(count)
+        +get_top_memory_processes(count)
+        +kill_process(pid)
+        +start_monitoring(duration)
+    }
+}
+
+package "Business Logic Layer" {
+    class ProcessOperator {
+        +get_processes_list(count)
+        +get_accessible_processes(count)
+        +kill_process(process_entity)
+    }
+
+    class ProcessAnalyzer {
+        +sort_by_cpu(processes)
+        +sort_by_memory(processes)
+        +find_by_name(processes, name)
+    }
+
+    class ProcessMonitor {
+        +watch_processes(interval, duration)
+    }
+}
+
+package "Data Access Layer" {
+    class ProcessRepository {
+        +fetch_all(limit)
+        +fetch_accessible(limit)
+        +get_by_pid(pid)
+        +kill_process(pid)
+    }
+    
+    class TestProcessFactory {
+        +create_test_process(name, cpu_load, memory_load)
+        +terminate_test_process(process_entity)
+        +generate_test_processes(count)
+        +get_test_processes()
+    }
+}
+
+package "Domain / Model Layer" {
+    class ProcessEntity {
+        -pid: int
+        -name: str
+        -status: str
+        -ppid: int
+        -username: str
+        -cpu_percent: float
+        -memory: object
+        -create_time: Optional[float]
+        -accessible: bool
+        +formatted_create_time() : str
+        +__repr__()
+    }
+}
+
+' =======================
+'  Dependencies
+' =======================
+
+' Presentation -> Application
+ProcessView --> ProcessManager : uses
+
+' Application -> Business Logic
+ProcessManager --> ProcessOperator : creates & uses
+ProcessManager --> ProcessAnalyzer : creates & uses
+ProcessManager --> ProcessMonitor : creates & uses
+
+' Application -> Data Access
+ProcessManager --> ProcessRepository : creates
+
+' Business Logic -> Data Access
+ProcessOperator --> ProcessRepository : depends on
+ProcessMonitor --> ProcessRepository : depends on
+
+' Data Access -> Domain
+ProcessRepository --> ProcessEntity : creates/returns
+TestProcessFactory --> ProcessEntity : creates
+
+' Relationships between Data Access components
+ProcessRepository ..> TestProcessFactory : optional collaboration
+
+' External Dependencies
+ProcessRepository ..> psutil : uses
+TestProcessFactory ..> psutil : uses
+ProcessEntity ..> datetime : uses
+ProcessEntity ..> typing : uses
+
+note right of ProcessRepository
+  Uses psutil for real
+  system process information
+  and operations
+end note
+
+note right of TestProcessFactory
+  Creates mock processes
+  for testing and development
+  without system dependencies
+end note
+
+note right of ProcessEntity
+  Updated with proper typing:
+  - memory: object
+  - create_time: Optional[float]
+  - Uses typing module
+end note
+
+@enduml

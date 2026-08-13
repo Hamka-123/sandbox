@@ -1,0 +1,61 @@
+/* tagname selectors */
+/*
+
+SELECTOR {
+ PROPERTY1: VALUES;
+ PROPERTY2: VALUES;
+ PROPERTY3: VALUES;
+}
+
+*/
+span {
+  color: green;
+}
+
+div {
+  color: blue;
+}
+
+/* id name selector */
+#list11 {
+  background-color: gray;
+  color: #fff;
+}
+
+/* class name selector */
+.important_text {
+  font-weight: bolder;
+}
+
+.highlighted {
+  background-color: yellowgreen;
+}
+
+/*
+ combined 
+
+ SELECTOR1 SEP SELECTOR2 sep SELECTOR3 {
+
+ }
+
+
+
+sep: 
+    space
+    comma
+    > 
+
+*/
+p {
+  background-color: lightgray;
+}
+
+section p::first-letter {
+  color: red;
+  font-size: 2em;
+}
+
+/* container     FIRST_LEVELCHILD */
+section > p::first-line {
+  color: red;
+}/*# sourceMappingURL=style.css.map */

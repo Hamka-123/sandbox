@@ -1,0 +1,5 @@
+VM Name: Alina-provision-vm
+Public IP: 20.229.37.252
+Nginx URL: http://20.229.37.252
+Launch Date: четверг,  2 июля 2026 г. 14:49:33 (IDT)
+Created by local-exec.

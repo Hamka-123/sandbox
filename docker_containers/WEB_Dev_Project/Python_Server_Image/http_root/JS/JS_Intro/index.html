@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script>
+        console.log("Script1");
+        console.log("Script1-1");
+        console.log("Script1-2");
+        console.log("Script1-3");
+    </script>
+    <script src="js/script4.js">
+        // To be ignored:
+        console.log("IGNOORED");
+    </script>
+    <script src="js/script5.js" defer>
+    </script>
+    <script src="js/script6.js" async>
+        /* NON BLOCKING */
+    </script>
+
+</head>
+
+<body>
+    <script>
+        console.log("Script2");
+    </script>
+    <h1
+        onmouseenter="
+            // JS statememnts:
+            console.log('Mouse entered');
+        "
+    >JavaSCript - intro</h1>
+    <ul>
+        <li>Event driven - Event loop</li>
+        <ul>JS sources
+            <li>HTML tag SCRIPT</li>
+            <li>External script file</li>
+            <li>defer async attributes </li>
+            <li></li>
+            <ul>Event listeners (event handler)
+                <li>Tag attribute</li>
+                <li>addEventListener() method</li>
+            </ul>
+        </ul>
+    </ul>
+    <script>
+        console.log("Script3");
+    </script>
+
+</body>
+
+</html>

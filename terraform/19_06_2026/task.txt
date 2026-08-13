@@ -1,0 +1,116 @@
+домашнее задание на отработку сегодняшних тем.
+Terraform должен создать:
+- Resource Group;
+- Virtual Network и Subnet;
+- Network Security Group;
+- правило NSG, разрешающее:
+    - SSH TCP/22 — только с вашего публичного IP;
+    - HTTP TCP/80 — для проверки страницы Nginx в браузере;
+- Public IP;
+- Network Interface;
+- Ubuntu VM.
+
+делать вы это будете несколькими способами.
+
+способ 1 - через custom_data (cloud-init)
+
+создайте машину передав в неё следующий cloud-init конфиг
+#cloud-config
+
+package_update: true
+
+packages:
+  - nginx
+
+write_files:
+  - path: /var/www/html/index.html
+    permissions: "0644"
+    content: |
+      <!doctype html>
+      <html lang="ru">
+        <head>
+          <meta charset="utf-8">
+          <title>Terraform cloud-init</title>
+        </head>
+        <body>
+          <h1>Nginx установлен через cloud-init</h1>
+          <p>Источник настройки: custom_data в azurerm_linux_virtual_machine.</p>
+        </body>
+      </html>
+
+runcmd:
+  - systemctl enable nginx
+  - systemctl restart nginx
+результат: по публичному айпи открывается страница с текстом из файла, вы можете войти на машину со своего айпи по ссш.
+
+способ второй - provisioner file
+сделайте локально следующий html файл
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <title>Terraform file provisioner</title>
+  </head>
+  <body>
+    <h1>Этот файл был передан через provisioner file</h1>
+    <p>Файл был создан локально и скопирован на VM через SSH.</p>
+  </body>
+</html>
+используя provisioner file передайте этот файл на виртуальную машину
+
+результат: вы получили ошибку и выяснили, что забыли добавить блок connection с type ssh
+
+результат после того, как вы добавили блок connection: вы подключились к виртуалке по ссш и обнаружили файл там, куда попросили provisioner file его положить.
+
+способ второй с половиной - provisioner remote-exec
+в дополнение в предыдущему способу настройте provisioner remote exec копирующий файл из того места, куда вы его смогли сохранить, в /var/www/html/index.html и перезапускающий nginx
+
+результат: по публичному айпи открывается страница с текстом из файла, вы можете войти на машину со своего айпи по ссш и обнаружить файл в каталоге /var/www/html
+
+добавляем provisioner local-exec
+добавьте local-exec, который после создания VM создаст локальный файл created-vm-info.txt со следующим содержимым:
+- имя VM;
+- публичный IP;
+- URL страницы Nginx;
+- дату и время запуска;
+- строку "Created by local-exec."
+
+результат: Убедитесь, что файл создан на вашем компьютере, а не внутри VM. Откройте URL из файла в браузере и убедитесь, что страница Nginx доступна.
+
+часть вторая: "устрой дестрой"
+
+последней командой в remote-exec, после всех работающих команд, добавьте
+humusa-nam-prinesi-anahnu-babait-letim
+сделайте terraform apply и убедитесь, что такой команды в линуксе пока нет - будет ошибка.
+проверьте, что по публичному айпи открывается nginx и всё работает.
+сделайте terraform plan и осознайте почему terrafrom предлагает заметить вполне работающую машину с сайтом. сделайте так, чтобы больше не просил её заменить при выполнении terrafrom plan.
+Исправьте remote-exec оставив в нём только работающие команды.
+
+в local-exec замените команды на exit 1 и пересоздайте машину используя ключ -replace в связке с terraform apply
+получите ошибку, снова проверьте работает ли сайт. осознайте, что судьбу не обмануть и машина будет пересоздаваться, если провижионер завершился с exit code отличным от 0 (ноль).
+
+вернитесь к конфигурации с custom_data и cloud-init и используйте следующую доработанную версию конфигурации cloud-init
+#cloud-config
+
+package_update: true
+
+packages:
+  - nginx
+
+write_files:
+  - path: /var/www/html/index.html
+    permissions: "0644"
+    content: |
+      <h1>Nginx был установлен через cloud-init</h1>
+      <p>Но следующая команда cloud-init завершится с ошибкой.</p>
+
+runcmd:
+  - systemctl enable nginx
+  - systemctl restart nginx
+  - humusa-nam-prinesi-anahnu-babait-letim
+сделайте terraform apply и (не)удивитесь, что всё прошло без ошибок.
+залогиньтесь в созданную виртуальную машину и почитайте логи cloud-init
+cloud-init status --wait
+sudo cat /var/log/cloud-init-output.log
+проверьте, что сайт по публичному адресу открывается.
+осознайте разницу в изученных инструментах и их поведение в случае ошибок. подумайте над вопросами, которые вы хотели бы задать в начале следующего занятия, если они у вас есть.
