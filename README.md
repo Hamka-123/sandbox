@@ -14,7 +14,6 @@ Unlike my standalone projects and reusable tools, the contents here are intentio
 
 Current areas include:
 
-* 🐹 **Go**
 * 🐍 **Python**
 * 🐚 **Bash & Linux**
 * 🪟 **PowerShell**
