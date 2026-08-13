@@ -1,4 +1,4 @@
-[![first](https://github.com/Hamka-123/trainings/actions/workflows/first.yml/badge.svg)](https://github.com/Hamka-123/trainings/actions/workflows/first.yml)     [![Build & Push to GHCR](https://github.com/Hamka-123/trainings/actions/workflows/go-webapp-build.yml/badge.svg)](https://github.com/Hamka-123/trainings/actions/workflows/go-webapp-build.yml)     [![Terraform](https://github.com/Hamka-123/trainings/actions/workflows/terraform.yml/badge.svg)](https://github.com/Hamka-123/trainings/actions/workflows/terraform.yml)
+[![first](https://github.com/Hamka-123/trainings/actions/workflows/first.yml/badge.svg)](https://github.com/Hamka-123/trainings/actions/workflows/first.yml)      [![Build & Push to GHCR](https://github.com/Hamka-123/trainings/actions/workflows/go-webapp-build.yml/badge.svg)](https://github.com/Hamka-123/trainings/actions/workflows/go-webapp-build.yml)      [![Terraform](https://github.com/Hamka-123/trainings/actions/workflows/terraform.yml/badge.svg)](https://github.com/Hamka-123/trainings/actions/workflows/terraform.yml)
 
 # 🧪 Engineering Training & Experiments
 
@@ -16,6 +16,7 @@ Current and planned experiments include:
 
 * 🐹 **Go & Python**
 * 🐳 **Docker & Containers**
+* ☸️ **Kubernetes & Orchestration**
 * 🏗️ **Terraform / Infrastructure as Code**
 * ⚙️ **Ansible / Configuration Management**
 * 🚀 **GitHub Actions & CI/CD**
@@ -67,12 +68,3 @@ Evaluate
    ├── Turn into a reusable tool
    │
    └── Evolve into a standalone project
-```
-
-This keeps the sandbox focused on **learning and exploration**, while reusable utilities and more complete projects have their own repositories.
-
----
-
-## 📌 Status
-
-This is an **active engineering sandbox** and evolves continuously as I explore new technologies, approaches, and infrastructure concepts.
