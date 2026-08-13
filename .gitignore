@@ -6,8 +6,26 @@ override.tf.json
 *_override.tf
 *_override.tf.json
 
-Python_course/Project_2/MyEnv/
+# Python / Virtual Environments
+VirtualEnviroments/
+venv/
+env/
+.env
 
+# Build & packaging artifacts
+build/
+dist/
+*.egg-info/
+*.tar.gz
+
+# Logs & OS files
+*.log
+.DS_Store
+VirtualEnviroments/
+build/
+*.egg-info/
+Python_course/Project_2/TO_DO/custom_env*/
+Python_course/Project_2/MyEnv/
 Python_course/venv
 */.env
 Python_course/Project_2/.env
