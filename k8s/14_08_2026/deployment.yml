@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1       # Max extra pods created during update
+      maxUnavailable: 0 # Max pods that can be unavailable during update
+  template:
+    metadata:
+      labels:
+        app: web
+        env: production
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest # Can be updated to nginx:1.25 for rolling update demo
+        ports:
+        - containerPort: 80
+
+        # Выделение ресурсов (Requests и Limits)
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+
+        # 1. Проба запуска (выполняется самой первой до остальных)
+        startupProbe:
+          httpGet:
+            path: /healthz
+            port: 80
+          failureThreshold: 30    # даем 30 попыток (30 * 10сек = 5 минут на запуск)
+          periodSeconds: 10       # интервал между попытками — 10 секунд
+
+        # 2. Проба жизни (проверяет, не зависло ли приложение в процессе работы)
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 80
+          initialDelaySeconds: 0  # не нужна задержка, так как уже отработал startupProbe
+          periodSeconds: 10       # проверять каждые 10 секунд
+          timeoutSeconds: 3       # тайм-аут ответа — 3 секунды
+          failureThreshold: 3     # если 3 раза подряд ошибка — перезапустить контейнер
+
+        # 3. Проба готовности (проверяет, можно ли направлять в под трафик)
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          periodSeconds: 5        # проверять каждые 5 секунд
+          timeoutSeconds: 2       # тайм-аут — 2 секунды
+          failureThreshold: 2     # если 2 раза подряд не ответил — убрать из Service (изолировать от трафика)

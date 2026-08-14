@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: multi-container-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: multi-app
+  template:
+    metadata:
+      labels:
+        app: multi-app
+    spec:
+      containers:
+      # --- Первый контейнер: Основное приложение ---
+      - name: main-app
+        image: my-app-image:v1.0.0
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          periodSeconds: 5
+
+      # --- Второй контейнер: Вспомогательный сайдкар-сервис ---
+      - name: sidecar-proxy
+        image: proxy-image:v1.2.0
+        ports:
+        - containerPort: 9090
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 9090
+          periodSeconds: 10
