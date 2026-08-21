@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: probe-demo-pod
+  labels:
+    app: probe-test
+spec:
+  containers:
+  - name: busybox-server
+    image: python:3.9-slim
+    command: ["python", "-m", "http.server", "8080"]
+    ports:
+    - containerPort: 8080
+    
+    # 1. Startup Probe: дает время приложению на тяжелый старт
+    startupProbe:
+      httpGet:
+        path: /
+        port: 8080
+      failureThreshold: 30
+      periodSeconds: 2
+
+    # 2. Liveness Probe: проверяет, живой ли процесс (перезапустит под при зависании)
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 8080
+      initialDelaySeconds: 5
+      periodSeconds: 5
+
+    # 3. Readiness Probe: проверяет, готов ли принимать трафик от сервиса
+    readinessProbe:
+      httpGet:
+        path: /
+        port: 8080
+      initialDelaySeconds: 5
+      periodSeconds: 3
