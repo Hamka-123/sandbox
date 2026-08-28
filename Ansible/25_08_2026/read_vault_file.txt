@@ -1,0 +1,9 @@
+cat > read_vault_file.yml << 'EOF'
+---
+- name: Read variable from group_vars vault file
+  hosts: webservers
+  tasks:
+    - name: Show vault variable
+      debug:
+        msg: "The decrypted password from vault.yml is: {{ vault_db_password }}"
+EOF

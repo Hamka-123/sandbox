@@ -1,0 +1,139 @@
+cat << 'EOF' > run_all.sh
+#!/bin/bash
+set -e
+
+echo "=== 0. Проверка и установка Ansible через apt ==="
+if ! command -v ansible &> /dev/null; then
+    echo "Ansible не найден. Устанавливаем через apt..."
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update -qq
+    apt-get install -y -qq ansible
+else
+    echo "Ansible уже установлен."
+fi
+
+echo "=== 1. Создание inventory.ini (для локального запуска) ==="
+cat << 'TPL' > inventory.ini
+[webservers]
+localhost ansible_connection=local
+TPL
+
+mkdir -p templates
+
+echo "=== 2. Создание файла переменных для деплоя (пароль .vault_pass) ==="
+echo "SuperClassSecret2026" > .vault_pass
+chmod 600 .vault_pass
+
+cat << 'TPL' > /tmp/plain_vault.yml
+vault_db_name: "production_db"
+vault_db_user: "admin_user"
+vault_db_pass: "s3cur3_P@ssw0rd_2026!"
+TPL
+
+ansible-vault encrypt /tmp/plain_vault.yml \
+  --output db_vault.yml \
+  --vault-password-file .vault_pass
+rm /tmp/plain_vault.yml
+
+
+echo "=== 3. Создание шаблона PHP-конфига ==="
+cat << 'TPL' > templates/db_config.php.j2
+<?php
+// Generated automatically by Ansible - DO NOT EDIT MANUALLY
+define('DB_NAME', '{{ vault_db_name }}');
+define('DB_USER', '{{ vault_db_user }}');
+define('DB_PASSWORD', '{{ vault_db_pass }}');
+define('DB_HOST', 'localhost');
+?>
+TPL
+
+
+echo "=== 4. Создание плейбука деплоя (deploy_secure_app.yml) ==="
+cat << 'TPL' > deploy_secure_app.yml
+---
+- name: Deploy Secure Database Configuration
+  hosts: webservers
+  become: false  # Без повышения привилегий, чтобы писалось в локальную папку /tmp
+  vars_files:
+    - db_vault.yml
+
+  tasks:
+    - name: Ensure target config directory exists
+      file:
+        path: /tmp/var/www/app
+        state: directory
+        mode: '0755'
+
+    - name: Deploy database config with restricted permissions
+      template:
+        src: templates/db_config.php.j2
+        dest: /tmp/var/www/app/db_config.php
+        mode: '0600'
+      no_log: true
+TPL
+
+
+echo "=== 5. Создание секретов и ротация ключа (Rekey) ==="
+echo -n "OldPassword2026" > .vault_pass_old
+echo -n "NewPassword2027" > .vault_pass_new
+chmod 600 .vault_pass_old .vault_pass_new
+
+cat << 'TPL' > /tmp/plain_secrets.yml
+app_db_pass: "SuperConfidentialPass123"
+TPL
+
+ansible-vault encrypt /tmp/plain_secrets.yml \
+  --output secrets.yml \
+  --vault-password-file .vault_pass_old \
+  --encrypt-vault-id default
+rm /tmp/plain_secrets.yml
+
+# Выполняем ротацию ключа со старого на новый
+ansible-vault rekey secrets.yml \
+  --vault-password-file .vault_pass_old \
+  --new-vault-password-file .vault_pass_new
+
+
+echo "=== 6. Создание плейбука для no_log (test_no_log.yml) ==="
+cat << 'TPL' > test_no_log.yml
+---
+- name: Demonstrate Output Masking
+  hosts: webservers
+  vars_files:
+    - secrets.yml
+
+  tasks:
+    - name: Safe Task - Sensitive step with output protection
+      debug:
+        msg: "Exposed secret: {{ app_db_pass }}"
+      no_log: true
+TPL
+
+
+echo "=== 7. Запуск плейбуков через inventory.ini ==="
+ansible-playbook -i inventory.ini deploy_secure_app.yml --vault-password-file .vault_pass
+ansible-playbook -i inventory.ini test_no_log.yml --vault-password-file .vault_pass_new
+
+
+echo "=== 8. Проверка результатов ротации ключа ==="
+set +e
+ansible-vault view secrets.yml --vault-password-file .vault_pass_old > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "УСПЕХ: Старый пароль (.vault_pass_old) заблокирован."
+else
+    echo "ОШИБКА: Файл открылся старым паролем."
+fi
+
+ansible-vault view secrets.yml --vault-password-file .vault_pass_new > /dev/null 2>&1
+if [ $? -eq 0 ]; then
+    echo "УСПЕХ: Новый пароль (.vault_pass_new) успешно открывает файл."
+else
+    echo "ОШИБКА: Новый пароль не подошел."
+fi
+set -e
+
+echo "=== Всё готово и успешно проверено! ==="
+EOF
+
+chmod +x run_all.sh
+./run_all.sh

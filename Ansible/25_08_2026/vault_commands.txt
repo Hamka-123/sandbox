@@ -1,0 +1,6 @@
+ansible-vault create secrets.yml
+
+ansible-vault encrypt vars.yml
+
+ansible-vault encrypt_string 'ваш_секретный_пароль' --name 'db_password'
+

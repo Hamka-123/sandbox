@@ -1,0 +1,20 @@
+cat > test_both_views.yml << 'EOF'
+---
+- name: Show variable encrypted and decrypted
+  hosts: webservers
+  tasks:
+    - name: Show decrypted value (from Ansible variable)
+      debug:
+        msg: "Раскодированное значение: {{ vault_db_password }}"
+
+   - name: Read raw file contents using Linux cat (bypassing Ansible Vault auto-decrypt)
+      shell: cat group_vars_2/webservers/vault.yml
+      register: raw_file
+
+    - name: Show the raw encrypted output
+      debug:
+        msg: "{{ raw_file.stdout }}"
+EOF
+
+# Запускаем плейбук
+ansible-playbook -i inventory.ini test_both_views.yml --vault-password-file .vault_pass
