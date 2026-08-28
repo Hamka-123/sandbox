@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  APP_ENV: "production"
+  PORT: "8080"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secret
+type: Opaque
+stringData:
+  DB_PASSWORD: "SuperSecretPassword123"
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: demo-app-pod
+spec:
+  containers:
+  - name: web-app
+    image: python:3.11-slim
+    command: ["python", "-c", "import time; print('Running...'); time.sleep(3600)"]
+    env:
+    - name: DIRECT_ENV
+      value: "hello_from_direct"
+    - name: CONFIG_ENV
+      valueFrom:
+        configMapKeyRef:
+          name: app-config
+          key: APP_ENV
+    - name: SECRET_PASS
+      valueFrom:
+        secretKeyRef:
+          name: app-secret
+          key: DB_PASSWORD

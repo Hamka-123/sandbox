@@ -1,0 +1,12 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: isolate-beta-pod
+  namespace: ns-beta
+spec:
+  podSelector:
+    matchLabels:
+      run: beta-pod
+  policyTypes:
+  - Ingress
+  ingress: []
