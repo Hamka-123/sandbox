@@ -1,0 +1,32 @@
+---
+- name: Pre-flight System Checks
+  hosts: all
+  become: true
+  tasks:
+    - name: Install system diagnostic utilities
+      package:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - curl
+        - htop
+        - unzip
+
+    - name: Disk space check block
+      block:
+        - name: Check available disk space on /
+          shell: df -h / | awk 'NR==2 {print $5}' | sed 's/%//'
+          register: disk_usage
+          changed_when: false
+          failed_when: disk_usage.stdout | int > 80
+
+      rescue:
+        - name: Display warning message
+          debug:
+            msg: "Disk usage threshold exceeded! Triggering automated log cleanup..."
+
+      always:
+        - name: Create a log file appending an ISO-8601 execution timestamp
+          shell: date --iso-8601=seconds >> /tmp/maintenance.log
+          changed_when: false
+          delegate_to: localhost

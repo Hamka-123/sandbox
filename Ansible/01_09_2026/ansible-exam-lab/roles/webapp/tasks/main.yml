@@ -1,0 +1,33 @@
+---
+- name: Update package manager cache dynamically based on OS family (Debian)
+  apt:
+    update_cache: yes
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Update package manager cache dynamically based on OS family (RedHat)
+  dnf:
+    update_cache: yes
+  when: ansible_facts['os_family'] == 'RedHat'
+
+- name: Install the appropriate web server (Debian)
+  apt:
+    name: apache2
+    state: present
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Install the appropriate web server (RedHat)
+  dnf:
+    name: httpd
+    state: present
+  when: ansible_facts['os_family'] == 'RedHat'
+
+- name: Set service name fact based on OS
+  set_fact:
+    web_service_name: "{{ 'apache2' if ansible_facts['os_family'] == 'Debian' else 'httpd' }}"
+
+- name: Deploy index.html.j2 to the web root
+  template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+    mode: '0644'
+  notify: restart web server

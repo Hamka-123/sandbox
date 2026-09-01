@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ app_title }}</title>
+</head>
+<body>
+    <h1>{{ app_title }}</h1>
+    <p>Host Name: {{ ansible_hostname }}</p>
+    <p>IP Address: {{ ansible_default_ipv4.address | default('127.0.0.1') }}</p>
+    
+    <h2>Active Web Servers:</h2>
+    <ul>
+    {% for host in groups['webservers'] %}
+        <li>{{ host }}</li>
+    {% endfor %}
+    </ul>
+</body>
+</html>

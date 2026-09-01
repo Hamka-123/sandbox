@@ -1,0 +1,77 @@
+---
+- name: Secure Application Deployment with Ansible Vault & Dynamic Key Rotation
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    # Имя уволившегося сотрудника, при котором запускается динамическая ротация
+    target_employee_to_rotate: "Vasya"
+    
+    # Пути к файлам и паролям
+    vault_password_file: ".vault_pass.txt"
+    encrypted_vars_file: "vars/secret_vars.yml"
+
+  tasks:
+    - name: 1. Ensure vault password file exists
+      ansible.builtin.copy:
+        content: "super-secret-vault-password-2026"
+        dest: "{{ vault_password_file }}"
+        mode: '0600'
+      register: vault_file_created
+
+    - name: 2. Create directory for encrypted variables
+      ansible.builtin.file:
+        path: "vars"
+        state: directory
+        mode: '0755'
+
+    - name: 3. Create or ensure encrypted secret variables file exists
+      # Используем ansible-vault encrypt_string или создаем зашифрованный файл вручную/через команду
+      ansible.builtin.shell: |
+        if [ ! -f {{ encrypted_vars_file }} ]; then
+          cat <<EOF > {{ encrypted_vars_file }}
+          vault_db_user: "Vasya"
+          vault_db_name: "app_production"
+          vault_db_password: "InitialSecurePassword123"
+          EOF
+          ansible-vault encrypt {{ encrypted_vars_file }} --vault-password-file {{ vault_password_file }}
+        fi
+      args:
+        executable: /bin/bash
+
+    - name: 4. Include encrypted variables (Decrypted on the fly by Ansible)
+      ansible.builtin.include_vars:
+        file: "{{ encrypted_vars_file }}"
+
+    - name: 5. Display deployment status without leaking secrets in clear logs
+      ansible.builtin.debug:
+        msg: "Deploying application for database user. Secure configuration loaded successfully."
+
+    - name: 6. Dynamic Key Rotation Check (rekey on employee dismissal)
+      block:
+        - name: Check if current vault_db_user matches dismissed employee (Vasya)
+          ansible.builtin.debug:
+            msg: "Detected target user '{{ vault_db_user }}. Triggering mandatory vault rekey due to offboarding."
+
+        - name: Perform dynamic vault rekey using ansible-vault rekey
+          ansible.builtin.command: >
+            ansible-vault rekey {{ encrypted_vars_file }}
+            --vault-password-file {{ vault_password_file }}
+          # Для автоматизации в реальном скрипте здесь можно перенаправить новый пароль,
+          # либо использовать интерактивный вызов. Команда ниже обновляет пароль контейнера.
+          args:
+            executable: /bin/bash
+          register: rekey_result
+          changed_when: true
+
+        - name: Notify about successful key rotation
+          ansible.builtin.debug:
+            msg: "Vault keys successfully rotated for user {{ vault_db_user }}."
+
+      when: vault_db_user == target_employee_to_rotate
+
+    - name: 7. Skip rotation if user does not match
+      ansible.builtin.debug:
+        msg: "User is '{{ vault_db_user }}. Key rotation is not required."
+      when: vault_db_user != target_employee_to_rotate

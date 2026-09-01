@@ -1,0 +1,24 @@
+---
+- name: Master Orchestration - Zero-Downtime Rolling Deployment
+  hosts: webservers
+  become: true
+  serial: 1
+
+  pre_tasks:
+    - name: Print removing from load balancer message
+      debug:
+        msg: "Removing {{ inventory_hostname }} from service load balancer..."
+
+  roles:
+    - role: webapp
+
+  post_tasks:
+    - name: Include a URI health check verifying HTTP 200
+      uri:
+        url: "http://localhost:80"
+        status_code: 200
+        return_content: yes
+      
+    - name: Print re-adding to load balancer message
+      debug:
+        msg: "Re-adding {{ inventory_hostname }} back to load balancer..."
