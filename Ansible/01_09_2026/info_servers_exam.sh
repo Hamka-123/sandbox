@@ -43,3 +43,7 @@ echo ""
 
 echo -e "${BLUE}=== 7. ДОСТУПНОСТЬ ЛОКАЛЬНОГО HTTP-СЕРВЕРА ===${NC}"
 ansible webservers -i inventory.ini -m shell -a "curl -sI http://localhost | head -n 5" $VAULT_PASS_ARG
+echo ""
+
+echo -e "${BLUE}=== 8. СОДЕРЖИМОЕ СГЕНЕРИРОВАННОЙ ВЕБ-СТРАНИЦЫ ===${NC}"
+ansible webservers -i inventory.ini -m shell -a "curl -s http://localhost" $VAULT_PASS_ARG
