@@ -19,6 +19,7 @@ __pycache__/
 VirtualEnviroments/
 venv/
 env/
+.venv
 *.egg-info/
 Python_course/venv
 Python_course/Project_2/TO_DO/custom_env*/

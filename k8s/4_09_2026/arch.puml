@@ -1,0 +1,142 @@
+@startuml
+title Kubernetes Networking — Physical Data Center Analogy
+
+left to right direction
+
+skinparam backgroundColor #111827
+skinparam defaultTextAlignment center
+skinparam componentStyle rectangle
+skinparam shadowing false
+
+skinparam rectangle {
+    BorderColor #94A3B8
+    FontColor #E5E7EB
+    BackgroundColor #1F2937
+}
+
+skinparam package {
+    BorderColor #64748B
+    FontColor #F8FAFC
+    BackgroundColor #172033
+}
+
+skinparam ArrowColor #CBD5E1
+skinparam ArrowFontColor #CBD5E1
+
+
+' =========================================================
+' EXTERNAL NETWORK
+' =========================================================
+
+actor "External Client" as client
+
+rectangle "Ingress Controller\n[Physical / Running Process]\n\nL7 Reverse Proxy" as ingressController
+
+rectangle "Ingress Resource\n[Config / API Object]\n\nRouting rules\nexample.com/api → api-service" as ingress
+
+client --> ingressController : HTTPS / HTTP
+
+ingressController ..> ingress : watches / uses\nrouting configuration
+
+
+' =========================================================
+' SERVICE LAYER
+' =========================================================
+
+rectangle "Service\n[API Object / Desired State]\n\nStable virtual endpoint\nClusterIP / NodePort /\nLoadBalancer" as service
+
+rectangle "EndpointSlices\n[API Objects]\n\nCurrent backend Pod IPs" as endpoints
+
+ingressController --> service : routes request
+
+service --> endpoints : selects\nmatching Pods
+
+
+' =========================================================
+' WORKER NODE 1
+' =========================================================
+
+package "Worker Node 1\n[Physical / VM]" as node1 {
+
+    rectangle "kube-proxy\n[Physical / Running Process]\n\niptables / IPVS / nftables" as proxy1
+
+    rectangle "CNI Plugin\n[Physical / Running Component]\n\nPod IP + network connectivity" as cni1
+
+    rectangle "Pod A\n[Running Instance]\n\n10.244.1.10" as podA
+
+    proxy1 --> podA : Service routing
+    cni1 --> podA : network connectivity
+}
+
+
+' =========================================================
+' WORKER NODE 2
+' =========================================================
+
+package "Worker Node 2\n[Physical / VM]" as node2 {
+
+    rectangle "kube-proxy\n[Physical / Running Process]\n\niptables / IPVS / nftables" as proxy2
+
+    rectangle "CNI Plugin\n[Physical / Running Component]\n\nPod IP + network connectivity" as cni2
+
+    rectangle "Pod B\n[Running Instance]\n\n10.244.2.20" as podB
+
+    proxy2 --> podB : Service routing
+    cni2 --> podB : network connectivity
+}
+
+
+' =========================================================
+' SERVICE → NODES
+' =========================================================
+
+endpoints --> proxy1 : Pod IPs
+endpoints --> proxy2 : Pod IPs
+
+service ..> proxy1 : virtual endpoint
+service ..> proxy2 : virtual endpoint
+
+
+' =========================================================
+' POD NETWORK
+' =========================================================
+
+cni1 <--> cni2 : Pod-to-Pod network\ncross-node routing
+
+
+' =========================================================
+' CORE DNS
+' =========================================================
+
+rectangle "Application Pod\n[Running Instance]" as clientPod
+
+rectangle "CoreDNS\n[Physical / Running Service]\n\nCluster DNS" as dns
+
+clientPod --> dns : DNS query\n"my-service"
+dns --> service : resolves Service name\n→ Service IP
+
+
+' =========================================================
+' NETWORK POLICY
+' =========================================================
+
+rectangle "NetworkPolicy\n[Config / API Object]\n\nL3-L4 traffic policy\nAllow / Deny" as policy
+
+policy ..> cni1 : enforced by\nnetwork implementation
+policy ..> cni2 : enforced by\nnetwork implementation
+
+
+' =========================================================
+' LEGEND
+' =========================================================
+
+legend bottom
+    [Physical] Running process / networking component / storage
+    [Config]   Kubernetes API object / desired state / policy
+
+    -->        Traffic / data-plane flow
+    ..>        Configuration / watch / logical relationship
+    <-->       Network connectivity
+endlegend
+
+@enduml
