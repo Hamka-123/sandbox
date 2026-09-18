@@ -1,0 +1,45 @@
+# 1. По умолчанию закрываем весь входящий трафик во всем неймспейсе
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: app-ns
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+
+---
+# 2. Разрешаем фронтенду стучаться на бэкенд
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-front-to-back
+  namespace: app-ns
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: frontend
+
+---
+# 3. Разрешаем Ingress-контроллеру доступ к фронтенду
+# (Контроллер обычно живет в неймспейсе ingress-nginx, поэтому селектим по неймспейсу)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-to-frontend
+  namespace: app-ns
+spec:
+  podSelector:
+    matchLabels:
+      app: frontend
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
