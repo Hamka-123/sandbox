@@ -10,12 +10,12 @@ echo "Starting Jenkins container..."
 docker run -d \
   --name my-jenkins \
   -p 8080:8080 -p 50000:50000 \
-  -v jenkins_home:/var/lib/jenkins_home \
+  -v jenkins_home:/var/jenkins_home \
   -e JAVA_OPTS="-Djenkins.install.runSetupWizard=false -Dhudson.security.csrf.GlobalCrumbIssuerConfiguration.DISABLE_CSRF_PROTECTION=true" \
   jenkins/jenkins:lts-jdk17
 
 echo "Waiting for Jenkins to generate the initial admin password..."
-until docker exec my-jenkins [ -f /var/lib/jenkins/secrets/initialAdminPassword ]; do
+until docker exec my-jenkins [ -f /var/jenkins_home/secrets/initialAdminPassword ]; do
   sleep 2
 done
 
@@ -23,5 +23,5 @@ echo "=========================================="
 echo "Jenkins is running via Docker successfully!"
 echo "Access port: 8080"
 echo "Initial Admin Password:"
-docker exec my-jenkins cat /var/lib/jenkins/secrets/initialAdminPassword
+docker exec my-jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 echo "=========================================="
