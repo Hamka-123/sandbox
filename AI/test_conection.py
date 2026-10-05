@@ -27,9 +27,36 @@
 from google import genai
 
 client = genai.Client()
+# # Получаем и выводим список всех доступных моделей
+# for model in client.models.list():
+#     print(model.name)
 
-interaction = client.interactions.create(
-    model="gemini-3.8-flash",
-    input="Explain how AI works in a few words"
-)
-print(interaction.output_text)
+MODEL = "gemini-3.5-flash-lite"
+
+prompt = """
+Explain how AI works in a one sentence
+"""
+
+prompt1 = """
+You are the AI teacher. Explain how AI works in a one sentence
+"""
+prompt2 = """
+You are the AI teacher. Explain how AI works in a one sentence. Answer on Russian, not more then 10 words.
+"""
+
+# prompt3 = input("Enter your question: ")
+
+while True:
+    print("Hello from my first AI app!!!")
+    
+    decision = "y"
+    if decision == "n":
+        break
+    
+    prompt = input("Input your question: ")
+    interaction = client.interactions.create(
+        model=MODEL,
+        input=prompt
+    )
+    print(interaction.output_text)
+    decision = input("Ask another question? y/n: ")
