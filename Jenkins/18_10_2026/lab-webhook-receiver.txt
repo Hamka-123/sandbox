@@ -1,0 +1,84 @@
+cat << 'EOF' > script.groovy
+import jenkins.model.*
+import hudson.model.*
+import hudson.tasks.Shell
+
+def instance = Jenkins.get()
+def jobName = 'lab-webhook-receiver'
+
+// Безопасное получение или создание джобы
+def job = instance.getItem(jobName)
+if (job == null) {
+    job = instance.createProject(FreeStyleProject.class, jobName)
+}
+
+// Настройка параметров: SECRET_KEY и EVENT_PAYLOAD
+def secretParam = new StringParameterDefinition('SECRET_KEY', '', 'Expected value: lab-secret-123')
+def payloadParam = new StringParameterDefinition('EVENT_PAYLOAD', '{}', 'String containing JSON input')
+
+job.removeProperty(ParametersDefinitionProperty.class)
+job.addProperty(new ParametersDefinitionProperty(secretParam, payloadParam))
+
+def labShellScript = '''#!/usr/bin/env bash
+set -euo pipefail
+
+# Cleanup Hook
+cleanup() {
+    echo "[LAB] Teardown complete."
+}
+trap cleanup EXIT
+
+EXPECTED_SECRET="lab-secret-123"
+
+echo "--> Step 1: Validating Secret Key..."
+if [ "${SECRET_KEY:-}" != "${EXPECTED_SECRET}" ]; then
+    echo "[ERROR] Invalid secret!" >&2
+    exit 1
+fi
+
+echo "[SUCCESS] Secret verified."
+
+# Parsing action and component from EVENT_PAYLOAD using grep/cut
+ACTION=$(echo "${EVENT_PAYLOAD}" | grep -o '"action":"[^"]*' | cut -d'"' -f4 || echo "unknown")
+COMPONENT=$(echo "${EVENT_PAYLOAD}" | grep -o '"component":"[^"]*' | cut -d'"' -f4 || echo "unknown")
+
+echo "--> Step 2: Processing event data..."
+echo "Processing action '${ACTION}' for component '${COMPONENT}'"
+'''
+
+job.getBuildersList().clear()
+job.getBuildersList().add(new Shell(labShellScript))
+job.save()
+
+println "LAB_WEBHOOK_RECEIVER_PROVISIONED"
+EOF
+
+# Деплой скрипта на Jenkins через REST API
+curl -s -X POST "http://localhost:8080/scriptText" \
+  -u "admin:$API_TOKEN" \
+  --data-urlencode "script@script.groovy"
+
+rm script.groovy
+
+
+
+# 1. Неавторизованный тест (Неверный ключ)
+NEXT_BUILD_NUM=$(curl -s -u "admin:$API_TOKEN" "http://localhost:8080/job/lab-webhook-receiver/api/json" | grep -o '"nextBuildNumber":[^,]*' | cut -d':' -f2)
+
+curl -X POST -s -u "admin:$API_TOKEN" \
+  "http://localhost:8080/job/lab-webhook-receiver/buildWithParameters?SECRET_KEY=wrong-key" \
+  --data-urlencode 'EVENT_PAYLOAD={"action":"deploy","component":"backend"}'
+
+sleep 3
+curl -s -u "admin:$API_TOKEN" "http://localhost:8080/job/lab-webhook-receiver/${NEXT_BUILD_NUM}/consoleText"
+
+
+# 2. Авторизованный тест (Правильный ключ и JSON)
+NEXT_BUILD_NUM=$(curl -s -u "admin:$API_TOKEN" "http://localhost:8080/job/lab-webhook-receiver/api/json" | grep -o '"nextBuildNumber":[^,]*' | cut -d':' -f2)
+
+curl -X POST -s -u "admin:$API_TOKEN" \
+  "http://localhost:8080/job/lab-webhook-receiver/buildWithParameters?SECRET_KEY=lab-secret-123" \
+  --data-urlencode 'EVENT_PAYLOAD={"action":"deploy","component":"backend"}'
+
+sleep 3
+curl -s -u "admin:$API_TOKEN" "http://localhost:8080/job/lab-webhook-receiver/${NEXT_BUILD_NUM}/consoleText"

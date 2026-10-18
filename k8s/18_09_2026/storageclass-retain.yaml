@@ -1,0 +1,7 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: csi-retain-sc
+provisioner: standard # Для Kind/Minikube обычно используется стандартный провиженер (или rbd.csi.ceph.com / aws.ebs и т.д. в облаках)
+reclaimPolicy: Retain
+volumeBindingMode: WaitForFirstConsumer
