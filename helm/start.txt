@@ -2,21 +2,17 @@
 В зависимости от вашей операционной системы установить CLI-клиент Helm можно разными способами:
 
 В macOS (через Homebrew):
-
-Bash
 brew install helm
+
 В Linux / macOS через официальный скрипт установки (автоматическая загрузка последней версии):
-
-Bash
 curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
 Через пакетные менеджеры дистрибутивов (например, Ubuntu/Debian):
-
-Bash
 sudo apt-get install helm
-Проверка версии (чтобы убедиться, что Helm установился):
 
-Bash
+Проверка версии (чтобы убедиться, что Helm установился):
 helm version
+
 2. Управление самим Helm (Self-Management & Plugins)
 Команды, которые касаются обновления самого бинарника Helm и работы с расширениями:
 
@@ -82,3 +78,21 @@ helm lint <chart-path> — проверить чарт на наличие си�
 helm template <chart-path> — сгенерировать и вывести в консоль итоговые YAML-файлы без отправки их в кластер (отлично подходит для отладки).
 
 helm package <chart-path> — упаковать папку с чартом в готовый архив (.tgz).
+
+
+
+helm create my-chart
+
+my-chart/
+├── Chart.yaml             # Метаданные чарта (имя, версия, описание)
+├── values.yaml            # Значения по умолчанию для параметров
+├── Charts/                # Зависимости (другие чарты, от которых зависит этот)
+├── templates/             # Шаблоны Kubernetes-манифестов
+│   ├── NOTES.txt          # Инструкция, выводимая после установки
+│   ├── _helpers.tpl       # Логика и переиспользуемые функции/шаблоны
+│   ├── deployment.yaml    # Шаблон Deployment
+│   ├── service.yaml       # Шаблон Service
+│   └── ...                # Другие манифесты (Ingress, Secret, ConfigMap)
+└── .helmignore            # Файлы, которые нужно проигнорировать при сборке
+
+
