@@ -1,0 +1,84 @@
+1. Установка Helm (Installation)
+В зависимости от вашей операционной системы установить CLI-клиент Helm можно разными способами:
+
+В macOS (через Homebrew):
+
+Bash
+brew install helm
+В Linux / macOS через официальный скрипт установки (автоматическая загрузка последней версии):
+
+Bash
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+Через пакетные менеджеры дистрибутивов (например, Ubuntu/Debian):
+
+Bash
+sudo apt-get install helm
+Проверка версии (чтобы убедиться, что Helm установился):
+
+Bash
+helm version
+2. Управление самим Helm (Self-Management & Plugins)
+Команды, которые касаются обновления самого бинарника Helm и работы с расширениями:
+
+Обновление Helm до последней версии:
+
+Bash
+helm self-upgrade
+Установка плагина для Helm (например, для поддержки секретов или дополнительных функций):
+
+Bash
+helm plugin install <url-плагина>
+Список установленных плагинов:
+
+Bash
+helm plugin list
+Удаление плагина:
+
+Bash
+helm plugin uninstall <plugin-name>
+
+
+1. Управление репозиториями (Helm Repositories)
+helm repo add <name> <url> — добавить сторонний репозиторий чартов.
+
+helm repo update — обновить локальный кэш всех добавленных репозиториев.
+
+helm repo list — вывести список подключенных репозиториев.
+
+helm repo remove <name> — удалить репозиторий.
+
+helm search repo <keyword> — найти нужный чарт в репозиториях.
+
+2. Установка и обновление релизов (Install & Upgrade)
+helm install <release-name> <chart-name> — установить релиз из чарта.
+
+helm upgrade <release-name> <chart-name> — обновить существующий релиз (при изменении конфигурации или версии).
+
+helm upgrade --install <release-name> <chart-name> — «умная» команда: обновить релиз, если он уже есть, а если нет — установить с нуля.
+
+helm rollback <release-name> <revision> — откатить релиз к указанной версии при сбое.
+
+3. Просмотр и диагностика (Inspect & List)
+helm list (или helm ls) — показать список всех установленных релизов в текущем namespace.
+
+helm list --all-namespaces — показать все установленные релизы во всех пространствах имен.
+
+helm status <release-name> — посмотреть детальное состояние конкретного релиза.
+
+helm get manifest <release-name> — посмотреть все сгенерированные манифесты Kubernetes, которые сейчас развернуты.
+
+helm get values <release-name> — посмотреть параметры (values), с которыми был запущен релиз.
+
+helm show values <chart-name> — посмотреть параметры по умолчанию прямо из чарта перед установкой.
+
+4. Удаление (Uninstall)
+helm uninstall <release-name> — полностью удалить (стереть) релиз из кластера.
+
+5. Разработка собственных чартов (Chart Development)
+helm create <chart-name> — создать шаблон нового чарта со стандартной структурой папок.
+
+helm lint <chart-path> — проверить чарт на наличие синтаксических ошибок и багов в манифестах.
+
+helm template <chart-path> — сгенерировать и вывести в консоль итоговые YAML-файлы без отправки их в кластер (отлично подходит для отладки).
+
+helm package <chart-path> — упаковать папку с чартом в готовый архив (.tgz).
