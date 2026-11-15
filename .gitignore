@@ -7,6 +7,7 @@ override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
+*cred*
 
 # Build & packaging artifacts
 build/

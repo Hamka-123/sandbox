@@ -1,0 +1,31 @@
+Migration Steps & Order of Execution (#25)
+
+PR 1: Terraform infrastructure to create ECR repositories. (Explain in the PR why I chose this specific mutability mode for the tags)
+
+Setup: Add inline StrapiECRPushPolicy to the existing ECS deployment user for ECR push/pull access.
+
+PR 2: Workflow update for dual-push (GHCR + ECR) in mainpage-strapi.
+
+Seed ECR manually by pushing the currently running latest images.
+
+Test the ECR lifecycle policy locally/safely.
+
+PR 3: Apply/uncomment the ECR lifecycle policy if validation passes.
+
+PR 4: Switch ECS task definitions to pull from ECR
+
+Run forced deployment command: aws ecs update-service --cluster <cluster> --service <service> --force-new-deployment and monitor for steady state.
+
+Try rollback on dev env
+
+Dev environment verification.
+
+PRs to Main: Prod environment deployment and verification using the forced deployment command. + https://strapi.helpingtoleave.org/_health → 204
+
+PR 5: Remove GHCR push steps from the workflow pipeline.
+
+PR 6: Delete the ghcr-credentials secret from AWS Secrets Manager and remove repositoryCredentials.
+
+Edit documentation
+
+Future task: Migrate build and deploy pipelines to GitHub OIDC.
