@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-deployment
+  labels:
+    app: hello
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hello
+  template:
+    metadata:
+      labels:
+        app: hello
+    spec:
+      containers:
+        - name: hello
+          image: ghcr.io/borisovcloud/devops2079/hellogo:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: GREETING
+              valueFrom:
+                secretKeyRef:
+                  key: username
+                  name: hello-secret
+          resources:
+            requests:
+              memory: "6Mi"
+              cpu: "250m"
+            limits:
+              memory: "32Mi"
+              cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            periodSeconds: 1
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            periodSeconds: 1
