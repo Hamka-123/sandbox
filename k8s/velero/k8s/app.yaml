@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hellogo
+  namespace: migration
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hellogo
+  template:
+    metadata:
+      labels:
+        app: hellogo
+    spec:
+      initContainers:
+        - name: init-data
+          image: alpine
+          command:
+            [
+              "sh",
+              "-c",
+              "mkdir -p /data && date -u +%Y-%m-%dT%H:%M:%SZ > /data/date.txt && ls -la /data",
+            ]
+          volumeMounts:
+            - name: data-volume
+              mountPath: /data
+      containers:
+        - name: hellogo
+          image: ghcr.io/hamka-123/go-web-app:sha-fcaeac1
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: app-config
+          volumeMounts:
+            - name: data-volume
+              mountPath: /data
+      volumes:
+        - name: data-volume
+          persistentVolumeClaim:
+            claimName: app-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hellogo-svc
+  namespace: migration
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 8080
+  selector:
+    app: hellogo

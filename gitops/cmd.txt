@@ -3,4 +3,12 @@ kubectl create namespace argocd
 helm install argocd argo/argo-cd --namespace argocd
 kubectl get pods -n argocd
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
-kubectl port-forward svc/argocd-server -n argocd 8081:443
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+
+
+kubectl -n hellogo port-forward service/hello-service 8081:80
+kubectl -n hellogo rollout restart deployment/hello-deployment
+kubectl -n argocd get application  my-hellogo-app -o yaml
+kubectl get applications.argoproj.io -A # Посмотреть все Application во всех неймспейсах через kubectl
+
+https://argo-cd.readthedocs.io/en/latest/cli_installation/

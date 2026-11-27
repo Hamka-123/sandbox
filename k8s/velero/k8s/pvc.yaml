@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: app-pvc
+  namespace: migration
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: csi-hostpath-sc
+  # volumeSnapshotClassName: csi-hostpath-snapclass
+  resources:
+    requests:
+      storage: 1Gi

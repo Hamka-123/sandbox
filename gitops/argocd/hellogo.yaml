@@ -1,0 +1,164 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+    argocd.argoproj.io/hydrate: normal
+    argocd.argoproj.io/hydrate-timestamp: "2026-11-20T07:19:00.570142375Z"
+  creationTimestamp: "2026-11-20T07:07:08Z"
+  generation: 43
+  name: my-hellogo-app
+  namespace: argocd
+  resourceVersion: "137137"
+  uid: 1aeb3420-28ea-45e5-9723-716e027dedd2
+spec:
+  destination:
+    namespace: hellogo
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: gitops/my-hellogo-app
+    repoURL: https://github.com/Hamka-123/sandbox.git
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      enabled: true
+      prune: false
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+status:
+  controllerNamespace: argocd
+  health:
+    lastTransitionTime: "2026-11-20T07:19:57Z"
+    status: Healthy
+  history:
+  - deployStartedAt: "2026-11-20T07:08:28Z"
+    deployedAt: "2026-11-20T07:08:29Z"
+    id: 0
+    initiatedBy:
+      automated: true
+    revision: 91351e3d2448cbe80aee5f557bfd154bfe248ef1
+    source:
+      path: gitops/my-hellogo-app
+      repoURL: https://github.com/Hamka-123/sandbox.git
+      targetRevision: HEAD
+  - deployStartedAt: "2026-11-20T07:13:52Z"
+    deployedAt: "2026-11-20T07:13:52Z"
+    id: 1
+    initiatedBy:
+      automated: true
+    revision: f06a438cc2dd7085d92d8656aed69cda7f2f2cda
+    source:
+      path: gitops/my-hellogo-app
+      repoURL: https://github.com/Hamka-123/sandbox.git
+      targetRevision: HEAD
+  - deployStartedAt: "2026-11-20T07:19:01Z"
+    deployedAt: "2026-11-20T07:19:02Z"
+    id: 2
+    initiatedBy:
+      automated: true
+    revision: ac75b590060a6534675e8517b6b6b50c87c8df1b
+    source:
+      path: gitops/my-hellogo-app
+      repoURL: https://github.com/Hamka-123/sandbox.git
+      targetRevision: HEAD
+  - deployStartedAt: "2026-11-20T07:19:15Z"
+    deployedAt: "2026-11-20T07:19:15Z"
+    id: 3
+    initiatedBy:
+      username: admin
+    revision: ac75b590060a6534675e8517b6b6b50c87c8df1b
+    source:
+      path: gitops/my-hellogo-app
+      repoURL: https://github.com/Hamka-123/sandbox.git
+      targetRevision: HEAD
+  operationState:
+    finishedAt: "2026-11-20T07:19:15Z"
+    message: successfully synced (all tasks run)
+    operation:
+      initiatedBy:
+        username: admin
+      retry: {}
+      sync:
+        revision: ac75b590060a6534675e8517b6b6b50c87c8df1b
+        source:
+          path: gitops/my-hellogo-app
+          repoURL: https://github.com/Hamka-123/sandbox.git
+          targetRevision: HEAD
+        syncOptions:
+        - CreateNamespace=true
+        syncStrategy:
+          hook: {}
+    phase: Succeeded
+    startedAt: "2026-11-20T07:19:15Z"
+    syncResult:
+      resources:
+      - group: ""
+        hookPhase: Running
+        kind: Secret
+        message: secret/hello-secret configured
+        name: hello-secret
+        namespace: hellogo
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: ""
+        hookPhase: Running
+        kind: Service
+        message: service/hello-service unchanged
+        name: hello-service
+        namespace: hellogo
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: apps
+        hookPhase: Running
+        images:
+        - ghcr.io/borisovcloud/devops2079/hellogo:latest
+        kind: Deployment
+        message: deployment.apps/hello-deployment unchanged
+        name: hello-deployment
+        namespace: hellogo
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      revision: ac75b590060a6534675e8517b6b6b50c87c8df1b
+      source:
+        path: gitops/my-hellogo-app
+        repoURL: https://github.com/Hamka-123/sandbox.git
+        targetRevision: HEAD
+  reconciledAt: "2026-11-20T07:26:25Z"
+  resourceHealthSource: appTree
+  resources:
+  - kind: Secret
+    name: hello-secret
+    namespace: hellogo
+    status: Synced
+    version: v1
+  - kind: Service
+    name: hello-service
+    namespace: hellogo
+    status: Synced
+    version: v1
+  - group: apps
+    kind: Deployment
+    name: hello-deployment
+    namespace: hellogo
+    status: Synced
+    version: v1
+  sourceHydrator: {}
+  sourceType: Directory
+  summary:
+    images:
+    - ghcr.io/borisovcloud/devops2079/hellogo:latest
+  sync:
+    comparedTo:
+      destination:
+        namespace: hellogo
+        server: https://kubernetes.default.svc
+      source:
+        path: gitops/my-hellogo-app
+        repoURL: https://github.com/Hamka-123/sandbox.git
+        targetRevision: HEAD
+    revision: ac75b590060a6534675e8517b6b6b50c87c8df1b
+    status: Synced

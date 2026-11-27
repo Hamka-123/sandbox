@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: storage-class-mapping
+  namespace: velero
+data:
+  csi-hostpath-sc: managed-csi
